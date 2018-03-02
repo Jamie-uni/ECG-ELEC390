@@ -15,7 +15,7 @@ import android.view.MenuItem;
 
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    String TAG = "WorkoutActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
