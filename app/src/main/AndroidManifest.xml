@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ca.stepanian.vec.ecg">
+    package="com.elec390.teamb.ecg">
 
     <application
         android:allowBackup="true"
@@ -19,6 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".WorkoutHistoryActivity"
+            android:label="@string/title_activity_workout_history"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".WorkoutSessionDetailsActivity"></activity>
     </application>
 
 </manifest>

@@ -1,0 +1,70 @@
+@startuml
+
+class WorkoutActivity{
+    -Button BeginWorkoutButton
+    -Button EndWorkoutButton
+    -Button PauseWorkoutButton
+    -Button MakeCommentButton
+}
+
+class WorkoutHistoryActivity{
+
+}
+class WorkoutSessionDetailsActivity{
+
+}
+
+class ECGDataCollectionService{
+    + ECG_STATUS startECGCapture()
+    + ECG_STATUS getStatus()
+    + void connectBLE()
+    + void stopECGCapture()
+    - Override BLE_Callback()
+    - List<short> waveformDataBuffer
+}
+
+class DataStorage{
+    + ECGSession openNewSession()
+    + void closeNewSession (ECGSession)
+    + void appendSessionWaveform (ECGSession, List<short> data)
+    + List<short> getWaveformData (ECGSession)
+    + List<ECGSession> getSessionList()
+    + void makeTimestampedComment(String)
+    - List<ECGSession> SessionList
+}
+
+class SettingsActivity{
+    - SharedPreferenceHelper sharedPreferenceHelper
+    - Button SaveSettingsButton
+    - Button EditSettingsButton
+
+}
+
+class SendDoctorDataService{
+    - SharedPreferenceHelper sharedPreferenceHelper
+}
+
+class ECGSession{
+    + int startTime
+    + int stopTime
+    + LocalData date
+    + LocalTime startTime
+    + LocalTime stopTime
+    + int sampleRate
+    + Map<LocalTime, String> timestampedComments
+}
+
+Enum ECG_STATUS {
+    RECORDING
+    PAUSED
+    DISCONNECTED
+}
+
+WorkoutHistoryActivity ---|> WorkoutSessionDetailsActivity
+WorkoutActivity ---> ECGDataCollectionService
+SendDoctorDataService <--- ECGDataCollectionService
+ECGDataCollectionService ---> DataStorage
+WorkoutHistoryActivity <---> DataStorage
+WorkoutSessionDetailsActivity <--- DataStorage
+
+@enduml

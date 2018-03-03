@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "ca.stepanian.vec.ecg"
+        applicationId "com.elec390.teamb.ecg"
         minSdkVersion 18
         targetSdkVersion 26
         versionCode 1
