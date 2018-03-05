@@ -1,25 +1,67 @@
 package com.elec390.teamb.ecg;
-
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     String TAG = "WorkoutActivity";
+    private Button beginWorkoutButton;
+    private Button pauseWorkoutButton;
+    private Button stopWorkoutButton;
+    private Button makeCommentButton;
+    private TextView timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Workout");
 
+        //Assign Buttons.
+        beginWorkoutButton = (Button) this.findViewById(R.id.beginWorkoutButton);
+        pauseWorkoutButton = (Button) this.findViewById(R.id.pauseWorkoutButton);
+        stopWorkoutButton = (Button) this.findViewById(R.id.stopWorkoutButton);
+        makeCommentButton = (Button) this.findViewById(R.id.commentButton);
+        //Create onClick Listeners for buttons.
+        beginWorkoutButton.setOnClickListener(BeginPressed);
+        pauseWorkoutButton.setOnClickListener(PausePressed);
+        stopWorkoutButton.setOnClickListener(StopPressed);
+        makeCommentButton.setOnClickListener(CommentPressed);
+        //Makes several buttons invisible.
+        pauseWorkoutButton.setVisibility(View.GONE);
+        stopWorkoutButton.setVisibility(View.GONE);
+        makeCommentButton.setVisibility(View.GONE);
+        //Timer declarations.
+        timer = (TextView) findViewById(R.id.timerTextView);
+        /*Handler timerHandler = new Handler();
+        Runnable timerRunnable = new Runnable(){
+            @Override
+            public void run(){
+                long millis = System.currentTimeMillis();
+                int seconds = (int) (millis / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
+
+                timer.setText(String.format("%d:%02d",minutes,seconds));
+                timerHandler.postDelayed(this,500);
+            }
+        };*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -30,6 +72,56 @@ public class WorkoutActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
+    Button.OnClickListener BeginPressed = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            Log.d("TAG", "Workout Activity: Begin button pressed.");
+            //timerHandler.removeCallbacks(timerRunnable);
+
+            beginWorkoutButton.setVisibility(View.GONE);
+            pauseWorkoutButton.setVisibility(View.VISIBLE);
+            stopWorkoutButton.setVisibility(View.VISIBLE);
+            makeCommentButton.setVisibility(View.VISIBLE);
+        }
+    };
+
+    Button.OnClickListener PausePressed = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            Log.d("TAG", "Workout Activity: Pause button pressed.");
+            if(pauseWorkoutButton.getText().toString().equals("Pause")){
+                pauseWorkoutButton.setText("Resume");
+            }
+            else if(pauseWorkoutButton.getText().toString().equals("Resume")){
+                pauseWorkoutButton.setText("Pause");
+            }
+        }
+    };
+
+    Button.OnClickListener StopPressed = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            Log.d("TAG", "Workout Activity: Stop button pressed.");
+            beginWorkoutButton.setVisibility(View.VISIBLE);
+            pauseWorkoutButton.setVisibility(View.GONE);
+            stopWorkoutButton.setVisibility(View.GONE);
+            makeCommentButton.setVisibility(View.GONE);
+        }
+    };
+
+    Button.OnClickListener CommentPressed = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            Log.d("TAG", "Workout Activity: Comment button pressed.");
+        }
+    };
+
+
+
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -69,20 +161,18 @@ public class WorkoutActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_Workout) {
+            Log.d("TAG", "Drawer: Workout was selected.");
+            startActivity(new Intent(this,WorkoutActivity.class));
         }
-
+        else if (id == R.id.nav_WorkoutHistory) {
+            Log.d("TAG", "Drawer: Session History was selected.");
+            startActivity(new Intent(this,WorkoutHistoryActivity.class));
+        }
+        else if (id == R.id.nav_Settings) {
+            Log.d("TAG", "Drawer: Settings was selected.");
+            startActivity(new Intent(this,SettingsActivity.class));
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
