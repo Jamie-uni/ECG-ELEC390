@@ -1,69 +1,81 @@
 @startuml
+package "Activities" <<rectangle>>  {
+    class WorkoutActivity{
+        -Button BeginWorkoutButton
+        -Button EndWorkoutButton
+        -Button PauseWorkoutButton
+        -Button MakeCommentButton
 
-class WorkoutActivity{
-    -Button BeginWorkoutButton
-    -Button EndWorkoutButton
-    -Button PauseWorkoutButton
-    -Button MakeCommentButton
+    }
+
+    class WorkoutHistoryActivity{
+        -TODO
+    }
+    class WorkoutSessionDetailsActivity{
+        -TODO
+    }
+    class SettingsActivity{
+        - SharedPreferenceHelper sharedPreferenceHelper
+        - Button SaveSettingsButton
+        - Button EditSettingsButton
+
+    }
+    interface NavBar
 }
 
-class WorkoutHistoryActivity{
+together {
+    class ECGDataCollectionService{
+        + ECG_STATUS startECGCapture()
+        + ECG_STATUS makeTimestampedComment(String)
+        + ECG_STATUS getStatus()
+        + void connectBLE()
+        + void stopECGCapture()
+        - Override BLE_Callback()
+        - List<short> waveformDataBuffer
+        - ECGSession currentSession
+        - ECG_STATUS currentStatus
+    }
 
+    class DataStorage{
+        + ECGSession openNewSession()
+        + void closeNewSession (ECGSession)
+        + void appendSessionWaveform (ECGSession, List<short> data)
+        + List<short> getWaveformData (ECGSession)
+        + List<ECGSession> getSessionList()
+
+        - List<ECGSession> SessionList
+    }
+
+
+
+    class SendDoctorDataService{
+        - SharedPreferenceHelper sharedPreferenceHelper
+    }
 }
-class WorkoutSessionDetailsActivity{
+package "Data Classes" <<rectangle>>{
+    class ECGSession{
+        + LocalDate date
+        + LocalTime startTime
+        + LocalTime stopTime
+        + int sampleRate
+        + Map<LocalTime, String> timestampedComments
+    }
 
+    Enum ECG_STATUS {
+        RECORDING
+        PAUSED
+        DISCONNECTED
+    }
 }
-
-class ECGDataCollectionService{
-    + ECG_STATUS startECGCapture()
-    + ECG_STATUS getStatus()
-    + void connectBLE()
-    + void stopECGCapture()
-    - Override BLE_Callback()
-    - List<short> waveformDataBuffer
-}
-
-class DataStorage{
-    + ECGSession openNewSession()
-    + void closeNewSession (ECGSession)
-    + void appendSessionWaveform (ECGSession, List<short> data)
-    + List<short> getWaveformData (ECGSession)
-    + List<ECGSession> getSessionList()
-    + void makeTimestampedComment(String)
-    - List<ECGSession> SessionList
-}
-
-class SettingsActivity{
-    - SharedPreferenceHelper sharedPreferenceHelper
-    - Button SaveSettingsButton
-    - Button EditSettingsButton
-
-}
-
-class SendDoctorDataService{
-    - SharedPreferenceHelper sharedPreferenceHelper
-}
-
-class ECGSession{
-    + int startTime
-    + int stopTime
-    + LocalData date
-    + LocalTime startTime
-    + LocalTime stopTime
-    + int sampleRate
-    + Map<LocalTime, String> timestampedComments
-}
-
-Enum ECG_STATUS {
-    RECORDING
-    PAUSED
-    DISCONNECTED
-}
-
-WorkoutHistoryActivity ---|> WorkoutSessionDetailsActivity
+NavBar ---|> WorkoutHistoryActivity
+NavBar ---|> WorkoutActivity
+NavBar ---|> SettingsActivity
+"Data Classes" -[hidden]-- Activities
+SettingsActivity -[hidden]-- DataStorage
+WorkoutHistoryActivity -|> WorkoutSessionDetailsActivity
 WorkoutActivity ---> ECGDataCollectionService
-SendDoctorDataService <--- ECGDataCollectionService
-ECGDataCollectionService ---> DataStorage
+SendDoctorDataService <- DataStorage
+DataStorage ->  ECGDataCollectionService
 WorkoutHistoryActivity <---> DataStorage
 WorkoutSessionDetailsActivity <--- DataStorage
 
