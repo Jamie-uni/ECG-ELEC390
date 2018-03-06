@@ -3,10 +3,11 @@ package com.elec390.teamb.ecg;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
+import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
-import java.io.File;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Room entity
@@ -14,24 +15,20 @@ import java.util.Map;
 
 @Entity(tableName = "sessions")
 public class SessionEntity {
-
     @PrimaryKey
     @ColumnInfo(name = "sessionstart")
-    private Date mSessionStart;
+    @TypeConverters({DateTypeConverter.class})
+    @NonNull
+    public Date mSessionStart;
 
     @ColumnInfo(name = "sessionend")
-    private Date mSessionEnd;
+    @TypeConverters({DateTypeConverter.class})
+    @NonNull
+    public Date mSessionEnd;
 
     @ColumnInfo(name = "sessioncomments")
-    private Map<Date,String> mSessionComments;
+    public String mSessionCommentsFileName;
 
     @ColumnInfo(name = "sessiondata")
-    private File mSessionData;
-
-    public SessionEntity(Date ss, Date se, Map<Date,String> sc, File sessiondata) {
-        this.mSessionStart = ss;
-        this.mSessionEnd = se;
-        this.mSessionComments = sc;
-        this.mSessionData = sessiondata;
-    }
+    public String mSessionDataFileName;
 }
