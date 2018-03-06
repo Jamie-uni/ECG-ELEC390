@@ -8,7 +8,7 @@ import android.arch.persistence.room.RoomDatabase;
  * Room database
  */
 
-@Database(entities = {Session.class}, version = 1)
+@Database(entities = {SessionEntity.class}, version = 1)
 public abstract class SessionDatabase extends RoomDatabase {
     public abstract SessionDao sessionDao();
 }

@@ -13,8 +13,8 @@ import android.arch.persistence.room.Query;
 public interface SessionDao {
 
     @Insert
-    void insert(Session session);
+    void insert(SessionEntity session);
 
     @Delete
-    void delete(Session session);
+    void delete(SessionEntity session);
 }
