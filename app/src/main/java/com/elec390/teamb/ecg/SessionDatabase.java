@@ -1,25 +1,14 @@
 package com.elec390.teamb.ecg;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
 
 /**
  * Room database
  */
 
-@Entity(tableName = "sessions")
-public class SessionDatabase {
-
-    @PrimaryKey
-    @ColumnInfo(name = "ecgsession")
-    private ECGSession mSession;
-
-    @ColumnInfo(name = "sessiondata")
-    private short[] mSessionData;
-
-    public SessionDatabase(ECGSession ecgs, short[] sessiondata) {
-        this.mSession = ecgs;
-        this.mSessionData = sessiondata;
-    }
+@Database(entities = {Session.class}, version = 1)
+public abstract class SessionDatabase extends RoomDatabase {
+    public abstract SessionDao sessionDao();
 }
