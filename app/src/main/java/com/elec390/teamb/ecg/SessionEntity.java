@@ -13,9 +13,12 @@ import java.util.Date;
  * Room entity
  */
 
-@Entity(tableName = "sessions")
+@Entity(tableName = "session")
 public class SessionEntity {
-    @PrimaryKey
+    @PrimaryKey (autoGenerate = true)
+    @ColumnInfo(name = "sessionid")
+    public int sId;
+
     @ColumnInfo(name = "sessionstart")
     @TypeConverters({DateTypeConverter.class})
     @NonNull
@@ -31,4 +34,12 @@ public class SessionEntity {
 
     @ColumnInfo(name = "sessiondata")
     public String mSessionDataFileName;
+
+    public SessionEntity(Date mSessionStart, Date mSessionEnd,
+                         String mSessionCommentsFileName, String mSessionDataFileName) {
+        this.mSessionStart = mSessionStart;
+        this.mSessionEnd = mSessionEnd;
+        this.mSessionCommentsFileName = mSessionCommentsFileName;
+        this.mSessionDataFileName = mSessionDataFileName;
+    }
 }
