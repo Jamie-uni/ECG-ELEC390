@@ -25,13 +25,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".WorkoutSessionDetailsActivity" />
-        <activity android:name=".DataBaseTestActivity"
+        <activity android:label="Database Test" android:name=".DataBaseTestActivity"
             android:icon="@drawable/ic_menu_share">
-
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name=".DataBaseTest"/>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>
