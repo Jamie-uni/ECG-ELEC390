@@ -30,7 +30,8 @@ public class DatabaseInitializer {
     }
     private static void populateWithTestData(SessionDatabase db) {
         Date start = new Date();
-        SessionEntity se = new SessionEntity(start, start, "comments.txt", "data.txt");
+        SessionEntity se = new SessionEntity(start, start, "Comments:"
+                , "data.csv");
         addSession(db, se);
     }
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
