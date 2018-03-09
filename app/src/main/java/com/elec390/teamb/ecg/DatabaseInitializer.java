@@ -22,7 +22,7 @@ public class DatabaseInitializer {
 //        task.execute();
         return getAppDatabase(c);
     }
-    private static void addSession(final SessionDatabase db, SessionEntity se) {
+    public static void addSession(final SessionDatabase db, SessionEntity se) {
         db.sessionDao().insert(se);
     }
     public static List<SessionEntity> getSessions(SessionDatabase db) {
