@@ -13,8 +13,8 @@ import java.util.List;
 
 public class DataStorage {
     private SessionDatabase sessionDatabase;
-    public DataStorage(SessionDatabase sd) {
-        sessionDatabase = sd;
+    public DataStorage(Context c) {
+        sessionDatabase = DatabaseInitializer.getDatabase(c);
     }
     public void saveWaveform(ECGSession ecgs, List<Short> data) {
         File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
@@ -22,7 +22,8 @@ public class DataStorage {
         if (!ecgdataroot.exists()) ecgdataroot.mkdirs();
         File ecgdatafile;
         // Create file
-        ecgdatafile = new File(ecgdataroot, "ECG-"+ecgs.getStartTime()+".txt");
+        ecgdatafile = new File(ecgdataroot,
+                DateTypeConverter.dateToString(ecgs.getStartTime())+".txt");
         try {
             FileWriter ecgfilewriter = new FileWriter(ecgdatafile,true);
             for(int i=0 ; i<data.size() ; i++) {ecgfilewriter.append(Short.toString(data.get(i)) + "\n");}
@@ -31,10 +32,11 @@ public class DataStorage {
         } catch (Exception e) {e.printStackTrace();}
         SessionEntity sessent;
         sessent = new SessionEntity(ecgs.getStartTime(), ecgs.getStopTime(),
-                ecgs.getTimestampedComments(),"ECG-"+ecgs.getStartTime()+".txt");
+                ecgs.getTimestampedComments(),
+                DateTypeConverter.dateToString(ecgs.getStartTime())+".txt");
         DatabaseInitializer.addSession(sessionDatabase, sessent);
     }
-//    public List<ECGSession> getSessionList() {
- //       return DatabaseInitializer.getSessions(sessionDatabase);
-//    }
+    public List<SessionEntity> getSessionList() {
+        return DatabaseInitializer.getSessions(sessionDatabase);
+    }
 }

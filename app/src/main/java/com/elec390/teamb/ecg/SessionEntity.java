@@ -30,16 +30,16 @@ public class SessionEntity {
     public Date mSessionEnd;
 
     @ColumnInfo(name = "sessioncomments")
-    public String mSessionCommentsFileName;
+    public String mSessionComments;
 
     @ColumnInfo(name = "sessiondata")
     public String mSessionDataFileName;
 
     public SessionEntity(Date mSessionStart, Date mSessionEnd,
-                         String mSessionCommentsFileName, String mSessionDataFileName) {
+                         String mSessionComments, String mSessionDataFileName) {
         this.mSessionStart = mSessionStart;
         this.mSessionEnd = mSessionEnd;
-        this.mSessionCommentsFileName = mSessionCommentsFileName;
+        this.mSessionComments = mSessionComments;
         this.mSessionDataFileName = mSessionDataFileName;
     }
 }
