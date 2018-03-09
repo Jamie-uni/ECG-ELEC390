@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public class DataStorage {
-    private SessionDatabase sessionDatabase;
+    private final SessionDatabase sessionDatabase;
     public DataStorage(Context c) {
         sessionDatabase = DatabaseInitializer.getDatabase(c);
     }

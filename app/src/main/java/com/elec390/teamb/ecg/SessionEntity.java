@@ -3,7 +3,6 @@ package com.elec390.teamb.ecg;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
@@ -22,18 +21,18 @@ public class SessionEntity {
     @ColumnInfo(name = "sessionstart")
     @TypeConverters({DateTypeConverter.class})
     @NonNull
-    public Date mSessionStart;
+    public final Date mSessionStart;
 
     @ColumnInfo(name = "sessionend")
     @TypeConverters({DateTypeConverter.class})
     @NonNull
-    public Date mSessionEnd;
+    public final Date mSessionEnd;
 
     @ColumnInfo(name = "sessioncomments")
-    public String mSessionComments;
+    public final String mSessionComments;
 
     @ColumnInfo(name = "sessiondata")
-    public String mSessionDataFileName;
+    public final String mSessionDataFileName;
 
     public SessionEntity(Date mSessionStart, Date mSessionEnd,
                          String mSessionComments, String mSessionDataFileName) {
