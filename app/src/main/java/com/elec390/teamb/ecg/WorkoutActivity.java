@@ -1,10 +1,7 @@
 package com.elec390.teamb.ecg;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.renderscript.ScriptGroup;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,9 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -115,7 +109,7 @@ public class WorkoutActivity extends AppCompatActivity
                 pauseWorkoutButton.setText("Resume");
                 timerHandler.removeCallbacks(updateTimer);
                 //updateTimerFuture.cancel(true);
-                pauseTime = System.currentTimeMillis();
+                pauseTime = System.currentTimeMillis()-startTime;
             }
             //RESUME button pressed.
             else if(pauseWorkoutButton.getText().toString().equals("Resume")){
@@ -134,7 +128,8 @@ public class WorkoutActivity extends AppCompatActivity
             pauseWorkoutButton.setVisibility(View.GONE);
             stopWorkoutButton.setVisibility(View.GONE);
             makeCommentButton.setVisibility(View.GONE);
-
+            timerHandler.removeCallbacks(updateTimer);
+            timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
             //stopTime =
         }
     };
