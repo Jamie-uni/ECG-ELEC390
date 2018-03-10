@@ -230,7 +230,7 @@ public class WorkoutActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_Settings) {
             Log.d("TAG", "Drawer: Settings was selected.");
-            startActivity(new Intent(this,SettingsActivity.class));
+            //startActivity(new Intent(this,SettingsActivity.class));
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
