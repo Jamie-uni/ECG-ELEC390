@@ -1,5 +1,4 @@
 package com.elec390.teamb.ecg;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     String TAG = "WorkoutActivity";
@@ -23,7 +23,12 @@ public class WorkoutActivity extends AppCompatActivity
     private Button pauseWorkoutButton;
     private Button stopWorkoutButton;
     private Button makeCommentButton;
+
     private TextView timer;
+    long startTime = 0;
+    long pauseTime = 0;
+    Handler timerHandler = new Handler();
+    String stopTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +52,8 @@ public class WorkoutActivity extends AppCompatActivity
         pauseWorkoutButton.setVisibility(View.GONE);
         stopWorkoutButton.setVisibility(View.GONE);
         makeCommentButton.setVisibility(View.GONE);
-        //Timer declarations.
+        //Timer declaration.
         timer = (TextView) findViewById(R.id.timerTextView);
-        /*Handler timerHandler = new Handler();
-        Runnable timerRunnable = new Runnable(){
-            @Override
-            public void run(){
-                long millis = System.currentTimeMillis();
-                int seconds = (int) (millis / 1000);
-                int minutes = seconds / 60;
-                seconds = seconds % 60;
-
-                timer.setText(String.format("%d:%02d",minutes,seconds));
-                timerHandler.postDelayed(this,500);
-            }
-        };*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -73,16 +65,38 @@ public class WorkoutActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    //Timer runnable.
+    Runnable updateTimer = new Runnable() {
+        @Override
+        public void run() {
+            long milliseconds = (System.currentTimeMillis() - startTime);
+            int seconds = (int) (milliseconds / 1000);
+            int minutes = seconds / 60;
+            int hours = minutes / 60;
+            seconds %= 60;
+
+            timer.setText(String.format("%d:%02d:%02d", hours, minutes, seconds));
+            timerHandler.postDelayed(this, 500);
+        }
+    };
+    //ExecutorService updateTimerExecutor = Executors.newSingleThreadExecutor();
+    //Future updateTimerFuture = updateTimerExecutor.submit(updateTimer);
+
     Button.OnClickListener BeginPressed = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Begin button pressed.");
-            //timerHandler.removeCallbacks(timerRunnable);
-
+            if(pauseWorkoutButton.getText().toString().equals("Resume")){
+                pauseWorkoutButton.setText("Pause");
+            }
             beginWorkoutButton.setVisibility(View.GONE);
             pauseWorkoutButton.setVisibility(View.VISIBLE);
             stopWorkoutButton.setVisibility(View.VISIBLE);
             makeCommentButton.setVisibility(View.VISIBLE);
+
+            //Resets timer and starts counting
+            startTime = System.currentTimeMillis();
+            timerHandler.postDelayed(updateTimer, 0);
         }
     };
 
@@ -90,11 +104,18 @@ public class WorkoutActivity extends AppCompatActivity
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Pause button pressed.");
+            //PAUSE button pressed.
             if(pauseWorkoutButton.getText().toString().equals("Pause")){
                 pauseWorkoutButton.setText("Resume");
+                timerHandler.removeCallbacks(updateTimer);
+                //updateTimerFuture.cancel(true);
+                pauseTime = System.currentTimeMillis()-startTime;
             }
+            //RESUME button pressed.
             else if(pauseWorkoutButton.getText().toString().equals("Resume")){
                 pauseWorkoutButton.setText("Pause");
+                startTime = System.currentTimeMillis() - pauseTime;
+                timerHandler.postDelayed(updateTimer,0);
             }
         }
     };
@@ -107,6 +128,9 @@ public class WorkoutActivity extends AppCompatActivity
             pauseWorkoutButton.setVisibility(View.GONE);
             stopWorkoutButton.setVisibility(View.GONE);
             makeCommentButton.setVisibility(View.GONE);
+            timerHandler.removeCallbacks(updateTimer);
+            timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
+            //stopTime =
         }
     };
 
@@ -116,8 +140,6 @@ public class WorkoutActivity extends AppCompatActivity
             Log.d("TAG", "Workout Activity: Comment button pressed.");
         }
     };
-
-
 
 
 
