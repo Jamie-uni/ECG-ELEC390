@@ -8,4 +8,5 @@
     tools:context="com.elec390.teamb.ecg.WorkoutHistoryActivity"
     tools:showIn="@layout/activity_workout_history">
 
+
 </android.support.v4.widget.NestedScrollView>
