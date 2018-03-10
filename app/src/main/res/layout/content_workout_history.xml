@@ -8,5 +8,9 @@
     tools:context="com.elec390.teamb.ecg.WorkoutHistoryActivity"
     tools:showIn="@layout/activity_workout_history">
 
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </android.support.v4.widget.NestedScrollView>

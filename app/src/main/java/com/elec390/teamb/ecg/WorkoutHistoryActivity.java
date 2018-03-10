@@ -51,12 +51,11 @@ public class WorkoutHistoryActivity extends AppCompatActivity
         List<SessionEntity> sessions = dataStorage.getSessionList();
 
         for(int i=0 ; i<sessions.size() ; i++) {
-            ListView += "Session #" + sessions.get(i).sId + "\nStart Time:\n"+ sessions.get(i).mSessionStart
-                    + "\nEnd Time:\n" + sessions.get(i).mSessionEnd + "\nFile Name in ECGData Folder:\n"
-                    + sessions.get(i).mSessionDataFileName + "\nSession Comments:\n"
-                    + sessions.get(i).mSessionComments + "\n";
+            System.out.println(sessions.get(i).sId + "      " + sessions.get(i).mSessionStart + "     " + sessions.get(i).mSessionEnd
+                    + "     " + sessions.get(i).mSessionComments + "      " + sessions.get(i).mSessionDataFileName);
         }
     }
 
+    
 
 }
