@@ -37,12 +37,9 @@ together {
     }
 
     class DataStorage{
-        + ECGSession openNewSession()
-        + void closeNewSession (ECGSession, List<short> waveformData)
-        + List<short> getWaveformData (ECGSession)
         + List<ECGSession> getSessionList()
-
-        - List<ECGSession> SessionList
+        + void saveWaveform(ECGSession, List<Short>)
+        - List<SessionEntity> SessionList
     }
 
 
@@ -52,26 +49,28 @@ together {
     }
 }
 package "Data Classes" <<rectangle>>{
+    class SessionEntity{
+        + int sId
+        + Date mSessionStart
+        + Date mSessionEnd
+        + String mSessionComments
+        + String mSessionDataFileName
+    }
     class ECGSession{
-        - Int sId
-        - Date mSessionStart
-        - Date mSessionEnd
+        - Date startTime
+        - Date stopTime
         - String timestampedComments
+        + stopSession()
+        + addComment(String)
         + getStartTime()
         + getStopTime()
         + getTimestampedComments()
-    }
-
-    Enum ECG_STATUS {
-        RECORDING
-        PAUSED
-        DISCONNECTED
     }
 }
 NavBar ---|> WorkoutHistoryActivity
 NavBar ---|> WorkoutActivity
 NavBar ---|> SettingsActivity
-"Data Classes" -[hidden]-- Activities
+SessionEntity -[hidden]-- NavBar
 SettingsActivity -[hidden]-- DataStorage
 WorkoutHistoryActivity -|> WorkoutSessionDetailsActivity
 WorkoutActivity ---> ECGDataCollectionService
