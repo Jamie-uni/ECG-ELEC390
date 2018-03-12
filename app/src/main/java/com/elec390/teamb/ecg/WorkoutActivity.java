@@ -55,7 +55,7 @@ public class WorkoutActivity extends AppCompatActivity
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // Request the permission to access external storage
             ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);}
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);}
         //Assign Buttons.
         beginWorkoutButton = (Button) this.findViewById(R.id.beginWorkoutButton);
         pauseWorkoutButton = (Button) this.findViewById(R.id.pauseWorkoutButton);

@@ -1,36 +1,23 @@
 package com.elec390.teamb.ecg;
-import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
 
 
-public class WorkoutHistoryActivity extends Activity
-{
+public class WorkoutHistoryActivity extends Activity {
     private DataStorage dataStorage;
     private ListView mListView;
     private MenuItem editMenuItem = null;
     private boolean deleteMode;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +34,7 @@ public class WorkoutHistoryActivity extends Activity
         List<SessionEntity> sessions = dataStorage.getSessionList();
         ArrayAdapter<SessionEntity> adapter = new ArrayAdapter<SessionEntity>(this,
                 R.layout.activity_listview, sessions);
-                mListView.setAdapter(adapter);
+        mListView.setAdapter(adapter);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,6 +58,4 @@ public class WorkoutHistoryActivity extends Activity
         else
             return super.onOptionsItemSelected(item);
     }
-
 }
-
