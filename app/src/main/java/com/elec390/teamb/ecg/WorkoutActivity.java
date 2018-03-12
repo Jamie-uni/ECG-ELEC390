@@ -3,6 +3,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.renderscript.ScriptGroup;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -116,7 +117,6 @@ public class WorkoutActivity extends AppCompatActivity
     Button.OnClickListener PausePressed = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
-
             //PAUSE button pressed.
             if(pauseWorkoutButton.getText().toString().equals("Pause")){
                 Log.d("TAG", "Workout Activity: Pause button pressed.");
@@ -144,7 +144,6 @@ public class WorkoutActivity extends AppCompatActivity
             makeCommentButton.setVisibility(View.GONE);
             timerHandler.removeCallbacks(updateTimer);
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
-            //stopTime =
         }
     };
 

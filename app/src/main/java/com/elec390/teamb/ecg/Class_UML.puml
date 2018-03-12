@@ -38,8 +38,7 @@ together {
 
     class DataStorage{
         + ECGSession openNewSession()
-        + void closeNewSession (ECGSession)
-        + void appendSessionWaveform (ECGSession, List<short> data)
+        + void closeNewSession (ECGSession, List<short> waveformData)
         + List<short> getWaveformData (ECGSession)
         + List<ECGSession> getSessionList()
 
@@ -54,11 +53,13 @@ together {
 }
 package "Data Classes" <<rectangle>>{
     class ECGSession{
-        + LocalDate date
-        + LocalTime startTime
-        + LocalTime stopTime
-        + int sampleRate
-        + Map<LocalTime, String> timestampedComments
+        - Int sId
+        - Date mSessionStart
+        - Date mSessionEnd
+        - String timestampedComments
+        + getStartTime()
+        + getStopTime()
+        + getTimestampedComments()
     }
 
     Enum ECG_STATUS {
