@@ -1,11 +1,19 @@
 package com.elec390.teamb.ecg;
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.renderscript.ScriptGroup;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,8 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-
 
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,6 +38,11 @@ public class WorkoutActivity extends AppCompatActivity
     Handler timerHandler = new Handler();
     String stopTime;
 
+    AlertDialog commentDialog;
+    EditText commentText;
+    String commentTime;
+    String commentAndTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +50,12 @@ public class WorkoutActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Workout");
-
+        // Check if access to external storage is granted
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission to access external storage
+            ActivityCompat.requestPermissions(this,
+            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);}
         //Assign Buttons.
         beginWorkoutButton = (Button) this.findViewById(R.id.beginWorkoutButton);
         pauseWorkoutButton = (Button) this.findViewById(R.id.pauseWorkoutButton);
@@ -54,6 +72,11 @@ public class WorkoutActivity extends AppCompatActivity
         makeCommentButton.setVisibility(View.GONE);
         //Timer declaration.
         timer = (TextView) findViewById(R.id.timerTextView);
+        //Comment button dialog window.
+        commentDialog = new AlertDialog.Builder(this).create();
+        commentText = new EditText(this);
+        commentDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        commentDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -103,16 +126,16 @@ public class WorkoutActivity extends AppCompatActivity
     Button.OnClickListener PausePressed = new Button.OnClickListener(){
         @Override
         public void onClick(View v){
-            Log.d("TAG", "Workout Activity: Pause button pressed.");
             //PAUSE button pressed.
             if(pauseWorkoutButton.getText().toString().equals("Pause")){
+                Log.d("TAG", "Workout Activity: Pause button pressed.");
                 pauseWorkoutButton.setText("Resume");
                 timerHandler.removeCallbacks(updateTimer);
-                //updateTimerFuture.cancel(true);
-                pauseTime = System.currentTimeMillis()-startTime;
+                pauseTime = System.currentTimeMillis() - startTime;
             }
             //RESUME button pressed.
             else if(pauseWorkoutButton.getText().toString().equals("Resume")){
+                Log.d("TAG", "Workout Activity: Resume button pressed.");
                 pauseWorkoutButton.setText("Pause");
                 startTime = System.currentTimeMillis() - pauseTime;
                 timerHandler.postDelayed(updateTimer,0);
@@ -130,7 +153,6 @@ public class WorkoutActivity extends AppCompatActivity
             makeCommentButton.setVisibility(View.GONE);
             timerHandler.removeCallbacks(updateTimer);
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
-            //stopTime =
         }
     };
 
@@ -138,10 +160,33 @@ public class WorkoutActivity extends AppCompatActivity
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Comment button pressed.");
+            pauseWorkoutButton.setText("Resume");
+            timerHandler.removeCallbacks(updateTimer);
+            pauseTime = System.currentTimeMillis() - startTime;
+            commentTime = Long.toString(System.currentTimeMillis() - pauseTime);
+
+            commentDialog.setTitle("Describe the problem:");
+            commentDialog.setView(commentText);
+            commentText.setText(""); //Clears previous comments
+            commentDialog.setCanceledOnTouchOutside(false);
+
+            commentDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface saveButton, int i){
+                    commentAndTime = commentText.getText().toString()
+                            .concat(" ").concat(commentTime);
+                    Log.d("TAG", "Entered comment: "+ commentAndTime);
+                }
+            });
+            commentDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Cancel", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface cancelButton, int i){
+                    Log.d("TAG", "Cancelled comment");
+                }
+            });
+            commentDialog.show();
         }
     };
-
-
 
 
 
@@ -193,7 +238,7 @@ public class WorkoutActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_Settings) {
             Log.d("TAG", "Drawer: Settings was selected.");
-            startActivity(new Intent(this,SettingsActivity.class));
+            //startActivity(new Intent(this,SettingsActivity.class));
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
