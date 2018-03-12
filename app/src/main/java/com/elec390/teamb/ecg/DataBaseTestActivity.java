@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.List;
 
 public class DataBaseTestActivity extends AppCompatActivity {
     private DataStorage dataStorage;
+    private ECGSession ecgSession;
+    private Button b1,b2,b3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +37,34 @@ public class DataBaseTestActivity extends AppCompatActivity {
         TextView tv1 = findViewById(R.id.tv1);
         tv1.setMovementMethod(new ScrollingMovementMethod());
         tv1.setText(text);
+        b1 = findViewById(R.id.b1);
+        b1.setVisibility(View.VISIBLE);
+        b2 = findViewById(R.id.b2);
+        b2.setVisibility(View.INVISIBLE);
+        b3 = findViewById(R.id.b3);
+        b3.setVisibility(View.INVISIBLE);
     }
-    public void generateSession(View v) {
+    public void startSession(View v) {
+        ecgSession = new ECGSession();
+        b1.setVisibility(View.INVISIBLE);
+        b2.setVisibility(View.VISIBLE);
+        b3.setVisibility(View.VISIBLE);
+    }
+    public void stopSession(View v) {
+        ecgSession.stopSession();
+        List<Short> shortList = new ArrayList<>();
+        for(short i=0 ; i<10 ; i++){shortList.add(i);}
+        dataStorage.saveWaveform(ecgSession, shortList);
+        String text = printSessions();
+        TextView tv1 = findViewById(R.id.tv1);
+        tv1.setMovementMethod(new ScrollingMovementMethod());
+        tv1.setText(text);
+        b1.setVisibility(View.VISIBLE);
+        b2.setVisibility(View.INVISIBLE);
+        b3.setVisibility(View.INVISIBLE);
+    }
+    public void addComment(View v) {ecgSession.addComment("Hi");}
+/*    public void generateSession(View v) {
 //        DatabaseInitializer.populateAsync(sd);
         ECGSession ecgs = new ECGSession();
         ecgs.addComment("Hi");
@@ -48,7 +77,7 @@ public class DataBaseTestActivity extends AppCompatActivity {
         TextView tv1 = findViewById(R.id.tv1);
         tv1.setMovementMethod(new ScrollingMovementMethod());
         tv1.setText(text);
-    }
+    }*/
     private String printSessions() {
         String text = "";
         List<SessionEntity> sessions = dataStorage.getSessionList();

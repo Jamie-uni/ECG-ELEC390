@@ -10,8 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
-
+        app:layout_constraintGuide_percent="0.7" />
     <TextView
         android:id="@+id/tv1"
         android:layout_width="wrap_content"
@@ -26,10 +25,30 @@
         android:id="@+id/b1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Generate New Session"
-        android:onClick="generateSession"
+        android:text="Start New Session"
+        android:onClick="startSession"
         app:layout_constraintTop_toBottomOf="@id/gl"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+    <Button
+        android:id="@+id/b2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Session"
+        android:onClick="stopSession"
+        app:layout_constraintTop_toBottomOf="@id/gl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/b3" />
+    <Button
+        android:id="@+id/b3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Comment"
+        android:onClick="addComment"
+        app:layout_constraintTop_toBottomOf="@id/gl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/b2"
         app:layout_constraintRight_toRightOf="parent" />
 </android.support.constraint.ConstraintLayout>
