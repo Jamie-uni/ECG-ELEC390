@@ -25,6 +25,9 @@ public class DatabaseInitializer {
     public static void addSession(final SessionDatabase db, SessionEntity se) {
         db.sessionDao().insert(se);
     }
+    public static void deleteSession(final SessionDatabase db, SessionEntity se) {
+        db.sessionDao().delete(se);
+    }
     public static List<SessionEntity> getSessions(SessionDatabase db) {
         return db.sessionDao().getAll();
     }

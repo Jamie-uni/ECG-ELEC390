@@ -1,8 +1,11 @@
 package com.elec390.teamb.ecg;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 
@@ -22,31 +27,84 @@ public class WorkoutHistoryActivity extends Activity {
     private List<SessionEntity> sessions;
     private ListView mListView;
     private MenuItem editMenuItem = null;
-    private boolean deleteMode;
+    private boolean deleteMode = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deleteMode = false;
         setContentView(R.layout.activity_workout_history);
+        final Context context = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Workout History");
-        dataStorage = new DataStorage(this);
+        dataStorage = new DataStorage(context);
         sessions = dataStorage.getSessionList();
         mListView = (ListView) findViewById(R.id.sessionListView);
-        final Context context = this;
+        // Set ListView adapter to display the toString() of each session in a separate TextView
+        final ArrayAdapter<SessionEntity> adapter = new ArrayAdapter<SessionEntity>(context,
+                R.layout.activity_listview, sessions);
+        mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast toast=Toast.makeText(getApplicationContext(),"Session Selected",Toast.LENGTH_SHORT);
-                toast.setMargin(50,50);
-                toast.show();
-                SessionEntity selectedSession = sessions.get(position);
-                Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
-                detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
-                startActivity(detailIntent);
+                final SessionEntity selectedSession = sessions.get(position);
+                final int positionToRemove = position;
+                AlertDialog.Builder adb1=new AlertDialog.Builder(context);
+                adb1.setTitle("View or Delete?");
+                adb1.setMessage("Would you like to view or delete session?");
+                adb1.setNegativeButton("View", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
+                        detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
+                        startActivity(detailIntent);
+                    }});
+                adb1.setPositiveButton("Delete", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder adb2=new AlertDialog.Builder(context);
+                        adb2.setTitle("Delete?");
+                        adb2.setMessage("Are you sure you want to delete Session?");
+                        adb2.setNegativeButton("Cancel", null);
+                        adb2.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Remove from database
+                                dataStorage.deleteSession(selectedSession);
+                                // Delete file
+                                File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
+                                File ecgdatafile = new File(ecgdataroot,
+                                        DateTypeConverter.dateToString(selectedSession.mSessionStart)+".txt");
+                                try {
+                                    ecgdatafile.delete();
+                                } catch (Exception e) {e.printStackTrace();}
+                                sessions.remove(positionToRemove);
+                                adapter.notifyDataSetChanged();
+                            }});
+                        adb2.show();
+                    }});
+                adb1.show();
+                /*
+                adb.setTitle("Delete?");
+                adb.setMessage("Are you sure you want to delete Session?");
+                final int positionToRemove = position;
+                adb.setNegativeButton("Cancel", null);
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Remove from database
+                        dataStorage.deleteSession(selectedSession);
+                        // Delete file
+                        File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
+                        File ecgdatafile = new File(ecgdataroot,
+                                DateTypeConverter.dateToString(selectedSession.mSessionStart)+".txt");
+                        try {
+                            ecgdatafile.delete();
+                        } catch (Exception e) {e.printStackTrace();}
+                        sessions.remove(positionToRemove);
+                        adapter.notifyDataSetChanged();
+                    }});
+                adb.show();*/
+                //Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
+                //detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
+                //startActivity(detailIntent);
             }
         });
-        printSessions();
+        //printSessions();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

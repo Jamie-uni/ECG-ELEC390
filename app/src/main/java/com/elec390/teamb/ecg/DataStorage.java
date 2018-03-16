@@ -20,9 +20,8 @@ public class DataStorage {
         File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
         // Create storage folder if it doesn't exist
         if (!ecgdataroot.exists()) ecgdataroot.mkdirs();
-        File ecgdatafile;
         // Create file
-        ecgdatafile = new File(ecgdataroot,
+        File ecgdatafile = new File(ecgdataroot,
                 DateTypeConverter.dateToString(ecgs.getStartTime())+".txt");
         try {
             FileWriter ecgfilewriter = new FileWriter(ecgdatafile,true);
@@ -38,5 +37,8 @@ public class DataStorage {
     }
     public List<SessionEntity> getSessionList() {
         return DatabaseInitializer.getSessions(sessionDatabase);
+    }
+    public void deleteSession(SessionEntity se) {
+        DatabaseInitializer.deleteSession(sessionDatabase, se);
     }
 }
