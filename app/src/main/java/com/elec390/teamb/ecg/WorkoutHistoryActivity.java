@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
-
-
 public class WorkoutHistoryActivity extends Activity {
     private DataStorage dataStorage;
     private List<SessionEntity> sessions;
@@ -54,6 +52,8 @@ public class WorkoutHistoryActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
                         detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
+                        detailIntent.putExtra("SESSION_FILENAME",
+                                DateTypeConverter.dateToString(selectedSession.mSessionStart)+".txt");
                         startActivity(detailIntent);
                     }});
                 adb1.setPositiveButton("Delete", new AlertDialog.OnClickListener() {
@@ -79,32 +79,8 @@ public class WorkoutHistoryActivity extends Activity {
                         adb2.show();
                     }});
                 adb1.show();
-                /*
-                adb.setTitle("Delete?");
-                adb.setMessage("Are you sure you want to delete Session?");
-                final int positionToRemove = position;
-                adb.setNegativeButton("Cancel", null);
-                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Remove from database
-                        dataStorage.deleteSession(selectedSession);
-                        // Delete file
-                        File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
-                        File ecgdatafile = new File(ecgdataroot,
-                                DateTypeConverter.dateToString(selectedSession.mSessionStart)+".txt");
-                        try {
-                            ecgdatafile.delete();
-                        } catch (Exception e) {e.printStackTrace();}
-                        sessions.remove(positionToRemove);
-                        adapter.notifyDataSetChanged();
-                    }});
-                adb.show();*/
-                //Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
-                //detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
-                //startActivity(detailIntent);
             }
         });
-        //printSessions();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
