@@ -6,8 +6,7 @@
         android:id="@+id/editProfileButton"
         android:checkable="false"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Item"
+        android:title="@string/edit"
         android:visible="true"
         app:showAsAction="always" />
 </menu>

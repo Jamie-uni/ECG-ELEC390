@@ -26,7 +26,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class WorkoutActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener
+{
     String TAG = "WorkoutActivity";
     private Button beginWorkoutButton;
     private Button pauseWorkoutButton;
