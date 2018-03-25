@@ -24,7 +24,15 @@
             android:name=".WorkoutHistoryActivity"
             android:label="@string/title_activity_workout_history"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SettingsActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".WorkoutActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WorkoutActivity" />
+        </activity>
         <activity
             android:name=".WorkoutSessionDetailsActivity"
             android:label="Workout Session Details"
