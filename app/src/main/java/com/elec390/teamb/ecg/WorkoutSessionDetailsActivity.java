@@ -24,8 +24,9 @@ import java.net.URI;
 
 public class WorkoutSessionDetailsActivity extends AppCompatActivity
 {
-    private ShareActionProvider mShareActionProvider;
+    private int data_size = 0;
     private String session_filename;
+    private File ecg_data_root, ecg_datafile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,28 +34,33 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         String session_details = this.getIntent().getExtras().getString("SESSION_DETAILS");
         session_filename = this.getIntent().getExtras().getString("SESSION_FILENAME");
+        ecg_data_root = new File(Environment.getExternalStorageDirectory(), "ECGData");
+        ecg_datafile = new File(ecg_data_root, session_filename);
+        try {
+            FileReader ecgFile = new FileReader(ecg_datafile);
+            BufferedReader bufferedFile = new BufferedReader(ecgFile);
+            while (bufferedFile.readLine() != null)data_size++;
+        } catch (Exception e) {e.printStackTrace();}
         TextView tv1 = findViewById(R.id.tv1);
         tv1.setText(session_details);
         GraphView graph = findViewById(R.id.ecgGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(10);
+        graph.getViewport().setMaxX(data_size);
         // set manual Y bounds
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(10);
+        graph.getViewport().setMaxY(250);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(getData());
         graph.addSeries(series);
     }
     private DataPoint[] getData() {
-        DataPoint[] values = new DataPoint[10];
-        File ecg_data_root = new File(Environment.getExternalStorageDirectory(), "ECGData");
-        File ecg_datafile = new File(ecg_data_root, session_filename);
+        DataPoint[] values = new DataPoint[data_size];
         try {
             FileReader ecgFile = new FileReader(ecg_datafile);
             BufferedReader bufferedFile = new BufferedReader(ecgFile);
-            for(int i=0 ; i<10 ; i++) {
+            for(int i=0 ; i<data_size ; i++) {
                 short y = Short.parseShort(bufferedFile.readLine());
                 DataPoint v = new DataPoint(i, y);
                 values[i] = v;

@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class DataBaseTestActivity extends AppCompatActivity {
     public void stopSession(View v) {
         ecgSession.stopSession();
         List<Short> shortList = new ArrayList<>();
-        for(short i=0 ; i<10 ; i++){shortList.add(i);}
+        for(int i=0;i<5;i++)shortList.addAll(generateData());
         dataStorage.saveWaveform(ecgSession, shortList);
         String text = printSessions();
         TextView tv1 = findViewById(R.id.tv1);
@@ -64,20 +65,6 @@ public class DataBaseTestActivity extends AppCompatActivity {
         b3.setVisibility(View.INVISIBLE);
     }
     public void addComment(View v) {ecgSession.addComment("Hi");}
-/*    public void generateSession(View v) {
-//        DatabaseInitializer.populateAsync(sd);
-        ECGSession ecgs = new ECGSession();
-        ecgs.addComment("Hi");
-        ecgs.stopSession();
-        ecgs.addComment("Bye");
-        List<Short> shortList = new ArrayList<>();
-        for(short i=0 ; i<10 ; i++){shortList.add(i);}
-        dataStorage.saveWaveform(ecgs, shortList);
-        String text = printSessions();
-        TextView tv1 = findViewById(R.id.tv1);
-        tv1.setMovementMethod(new ScrollingMovementMethod());
-        tv1.setText(text);
-    }*/
     private String printSessions() {
         String text = "";
         List<SessionEntity> sessions = dataStorage.getSessionList();
@@ -88,5 +75,9 @@ public class DataBaseTestActivity extends AppCompatActivity {
                     + sessions.get(i).mSessionComments + "\n";
         }
         return text;
+    }
+    private List<Short> generateData() {
+        Short[] ecgData = new Short[] {90,90,90,90,90,90,90,90,90,90,90,90,90,91,99,106,110,112,113,110,105,97,90,90,90,90,90,90,95,124,153,182,211,241,230,202,173,143,114,89,83,75,67,70,78,85,90,90,90,90,90,92,100,107,113,118,122,124,125,124,121,117,111,104,97,90,90,90,90,90,90,90,90,90,90,92,93,93,92,90,90,90,90,90,90,90,90,90,90,90,90};
+        return Arrays.asList(ecgData);
     }
 }
