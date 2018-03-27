@@ -52,6 +52,8 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
         graph.getViewport().setMaxY(250);
+        graph.getViewport().setScrollable(true); // enables horizontal scrolling
+        graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(getData());
         graph.addSeries(series);
     }

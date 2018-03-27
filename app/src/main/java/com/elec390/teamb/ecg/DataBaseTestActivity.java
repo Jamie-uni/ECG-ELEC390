@@ -54,7 +54,7 @@ public class DataBaseTestActivity extends AppCompatActivity {
     public void stopSession(View v) {
         ecgSession.stopSession();
         List<Short> shortList = new ArrayList<>();
-        for(int i=0;i<5;i++)shortList.addAll(generateData());
+        for(int i=0;i<20;i++)shortList.addAll(generateData());
         dataStorage.saveWaveform(ecgSession, shortList);
         String text = printSessions();
         TextView tv1 = findViewById(R.id.tv1);
