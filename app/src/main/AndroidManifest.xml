@@ -12,9 +12,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".WorkoutActivity"
-            android:label= "@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:icon="@drawable/becg">
+            android:icon="@drawable/becg"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,7 +27,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".WorkoutActivity" >
+            android:parentActivityName=".WorkoutActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -36,22 +36,34 @@
         <activity
             android:name=".WorkoutSessionDetailsActivity"
             android:label="Workout Session Details"
-            android:parentActivityName=".WorkoutHistoryActivity" >
-        <!-- Parent activity meta-data to support 4.0 and lower -->
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".WorkoutHistoryActivity" />
+            android:parentActivityName=".WorkoutHistoryActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WorkoutHistoryActivity" />
         </activity>
         <activity
-            android:label="Database Test"
             android:name=".DataBaseTestActivity"
-            android:icon="@drawable/ic_menu_share">
+            android:icon="@drawable/ic_menu_share"
+            android:label="Database Test">
             <intent-filter>
-                <action android:name=".DataBaseTest"/>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name=".DataBaseTest" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RealtimeGraphActivity"
+            android:label="Realtime Graph">
+        <intent-filter>
+            <action android:name=".RealtimeGraph" />
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+            android:parentActivityName=".WorkoutActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.elec390.teamb.ecg.WorkoutActivity" />
+        </activity>
     </application>
-
 </manifest>
