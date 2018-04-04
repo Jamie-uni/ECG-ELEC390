@@ -25,6 +25,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -44,7 +49,9 @@ public class WorkoutActivity extends AppCompatActivity
     EditText commentText;
     String commentTime;
     String commentAndTime;
-
+    private final Handler mHandler = new Handler();
+    private LineGraphSeries<DataPoint> mSeries;
+    private double lastXvalue = 0.0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,8 +96,48 @@ public class WorkoutActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        GraphView graph = findViewById(R.id.realtimeGraph);
+        // set manual X bounds
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(5);
+        // set manual Y bounds
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(250);
+        graph.getViewport().setScrollable(true); // enables horizontal scrolling
+        graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
+        mSeries = new LineGraphSeries<>();
+        graph.addSeries(mSeries);
+        GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
+        gridLabel.setHorizontalAxisTitle("Time (s)");
+        gridLabel.setVerticalAxisTitle("Voltage (mV)");
     }
-
+    private DataPoint[] tempData;
+    private int index=0;
+    Runnable plotPoint = new Runnable() {
+        @Override
+        public void run() {
+            if(index==0)tempData = generateData();
+            mSeries.appendData(tempData[index],true,10000);
+            index++;
+            if (index < tempData.length) mHandler.postDelayed(this, 1);
+            else {
+                index = 0;
+                mHandler.postDelayed(this, 100);
+            }
+        }
+    };
+    private DataPoint[] generateData() {
+        Short[] ecgData = new Short[] {90,90,90,90,90,90,90,90,90,90,90,90,90,91,99,106,110,112,113,110,105,97,90,90,90,90,90,90,95,124,153,182,211,241,230,202,173,143,114,89,83,75,67,70,78,85,90,90,90,90,90,92,100,107,113,118,122,124,125,124,121,117,111,104,97,90,90,90,90,90,90,90,90,90,90,92,93,93,92,90,90,90,90,90,90,90,90,90,90,90,90};
+        DataPoint[] values = new DataPoint[ecgData.length];
+        for(int i=0;i<ecgData.length;i++){
+            lastXvalue += (double) 1/200; // 200Hz Sample Rate
+            DataPoint v = new DataPoint(lastXvalue, ecgData[i]);
+            values[i] = v;
+        }
+        return values;
+    }
     //Timer runnable.
     Runnable updateTimer = new Runnable() {
         @Override
@@ -100,7 +147,6 @@ public class WorkoutActivity extends AppCompatActivity
             int minutes = seconds / 60;
             int hours = minutes / 60;
             seconds %= 60;
-
             timer.setText(String.format("%d:%02d:%02d", hours, minutes, seconds));
             timerHandler.postDelayed(this, 500);
         }
@@ -123,6 +169,11 @@ public class WorkoutActivity extends AppCompatActivity
             //Resets timer and starts counting
             startTime = System.currentTimeMillis();
             timerHandler.postDelayed(updateTimer, 0);
+            DataPoint[] tempDP = {new DataPoint(0,0)};
+            mSeries.resetData(tempDP);
+            lastXvalue = 0.0;
+            index = 0;
+            mHandler.postDelayed(plotPoint, 0);
         }
     };
 
@@ -134,6 +185,7 @@ public class WorkoutActivity extends AppCompatActivity
                 Log.d("TAG", "Workout Activity: Pause button pressed.");
                 pauseWorkoutButton.setText("Resume");
                 timerHandler.removeCallbacks(updateTimer);
+                mHandler.removeCallbacks(plotPoint);
                 pauseTime = System.currentTimeMillis() - startTime;
             }
             //RESUME button pressed.
@@ -142,6 +194,7 @@ public class WorkoutActivity extends AppCompatActivity
                 pauseWorkoutButton.setText("Pause");
                 startTime = System.currentTimeMillis() - pauseTime;
                 timerHandler.postDelayed(updateTimer,0);
+                mHandler.postDelayed(plotPoint, 0);
             }
         }
     };
@@ -155,6 +208,7 @@ public class WorkoutActivity extends AppCompatActivity
             stopWorkoutButton.setVisibility(View.GONE);
             makeCommentButton.setVisibility(View.GONE);
             timerHandler.removeCallbacks(updateTimer);
+            mHandler.removeCallbacks(plotPoint);
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
         }
     };
@@ -167,12 +221,10 @@ public class WorkoutActivity extends AppCompatActivity
             timerHandler.removeCallbacks(updateTimer);
             pauseTime = System.currentTimeMillis() - startTime;
             commentTime = Long.toString(System.currentTimeMillis() - pauseTime);
-
             commentDialog.setTitle("Describe the problem:");
             commentDialog.setView(commentText);
             commentText.setText(""); //Clears previous comments
             commentDialog.setCanceledOnTouchOutside(false);
-
             commentDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save", new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface saveButton, int i){
@@ -190,9 +242,6 @@ public class WorkoutActivity extends AppCompatActivity
             commentDialog.show();
         }
     };
-
-
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -202,7 +251,6 @@ public class WorkoutActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
