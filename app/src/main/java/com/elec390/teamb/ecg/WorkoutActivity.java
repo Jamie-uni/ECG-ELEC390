@@ -1,11 +1,15 @@
 package com.elec390.teamb.ecg;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.renderscript.ScriptGroup;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -43,7 +47,14 @@ public class WorkoutActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Workout");
-
+        // Check if access to external storage is granted
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Request the permission to access external storage
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
+        }
         //Assign Buttons.
         beginWorkoutButton = (Button) this.findViewById(R.id.beginWorkoutButton);
         pauseWorkoutButton = (Button) this.findViewById(R.id.pauseWorkoutButton);

@@ -41,4 +41,9 @@ public class SessionEntity {
         this.mSessionComments = mSessionComments;
         this.mSessionDataFileName = mSessionDataFileName;
     }
+    public String toString() {
+        return "Session #" + sId + "\nStart Time:\n"+ mSessionStart + "\nEnd Time:\n"
+                + mSessionEnd + "\nFile Name in ECGData Folder:\n"
+                + mSessionDataFileName + "\nSession Comments:\n" + mSessionComments + "\n";
+    }
 }

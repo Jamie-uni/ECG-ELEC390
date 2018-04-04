@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
     android:fitsSystemWindows="true"
     tools:context="com.elec390.teamb.ecg.WorkoutHistoryActivity">
 
@@ -46,3 +46,11 @@
         tools:layout_editor_absoluteY="-1dp" />
 
 </android.support.design.widget.CoordinatorLayout>
+=======
+    tools:context="com.elec390.teamb.ecg.DataBaseTestActivity">
+    <ListView
+        android:id="@+id/historyList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></ListView>
+</android.support.constraint.ConstraintLayout>
+>>>>>>> 8c430d0b07a50d93fd35281a55855ddefbea3700

@@ -1,4 +1,5 @@
 package com.elec390.teamb.ecg;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -27,16 +28,12 @@ import java.util.List;
 public class WorkoutHistoryActivity extends Activity
 {
     private DataStorage dataStorage;
+
     private ListView mListView;
     private MenuItem editMenuItem = null;
     private boolean deleteMode;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        deleteMode = false;
-        setContentView(R.layout.activity_workout_history);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Workout History");
 
@@ -56,11 +53,12 @@ public class WorkoutHistoryActivity extends Activity
 
        printSessions();
 
-    }
 
+    }
     private void printSessions()
     {
         List<SessionEntity> sessions = dataStorage.getSessionList();
+
         String[] listItems = new String[sessions.size()];
 
         for(int i=0 ; i<sessions.size() ; i++) {
