@@ -22,17 +22,23 @@ public class DataStorage {
         if (!ecgdataroot.exists()) ecgdataroot.mkdirs();
         // Create file
         File ecgdatafile = new File(ecgdataroot,
-                DateTypeConverter.dateToString(ecgs.getStartTime())+".txt");
+                DateTypeConverter.dateToString(ecgs.getStartTime())+".csv");
         try {
             FileWriter ecgfilewriter = new FileWriter(ecgdatafile,true);
-            for(int i=0 ; i<data.size() ; i++) {ecgfilewriter.append(Short.toString(data.get(i)) + "\n");}
+            ecgfilewriter.append("Time,Value\n");
+            for(int i=0 ; i<data.size() ; i++) {
+                // Data is sampled at 200 Hz
+                double d = (double) i/200;
+                ecgfilewriter.append(d+",");
+                ecgfilewriter.append(Short.toString(data.get(i)) + "\n");
+            }
             ecgfilewriter.flush();
             ecgfilewriter.close();
         } catch (Exception e) {e.printStackTrace();}
         SessionEntity sessent;
         sessent = new SessionEntity(ecgs.getStartTime(), ecgs.getStopTime(),
                 ecgs.getTimestampedComments(),
-                DateTypeConverter.dateToString(ecgs.getStartTime())+".txt");
+                DateTypeConverter.dateToString(ecgs.getStartTime())+".csv");
         DatabaseInitializer.addSession(sessionDatabase, sessent);
     }
     public List<SessionEntity> getSessionList() {

@@ -47,7 +47,7 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(data_size);
+        graph.getViewport().setMaxX(5);
         // set manual Y bounds
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
@@ -58,15 +58,20 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         graph.addSeries(series);
     }
     private DataPoint[] getData() {
-        DataPoint[] values = new DataPoint[data_size];
+        DataPoint[] values = new DataPoint[data_size-1];
         try {
             FileReader ecgFile = new FileReader(ecg_datafile);
             BufferedReader bufferedFile = new BufferedReader(ecgFile);
-            for(int i=0 ; i<data_size ; i++) {
-                short y = Short.parseShort(bufferedFile.readLine());
-                DataPoint v = new DataPoint(i, y);
+            bufferedFile.readLine();
+            for(int i=0 ; i<data_size-1 ; i++) {
+                String sTemp = bufferedFile.readLine();
+                String[] splitLine = sTemp.split(",");
+                double x = Double.parseDouble(splitLine[0]);
+                short y = Short.parseShort(splitLine[1]);
+                DataPoint v = new DataPoint(x, y);
                 values[i] = v;
             }
+            bufferedFile.close();
         } catch (Exception e) {e.printStackTrace();}
         return values;
     }
