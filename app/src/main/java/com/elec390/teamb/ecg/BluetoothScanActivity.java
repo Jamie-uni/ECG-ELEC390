@@ -19,16 +19,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 public class BluetoothScanActivity extends AppCompatActivity {
@@ -74,6 +70,8 @@ public class BluetoothScanActivity extends AppCompatActivity {
                 //final SessionEntity selectedSession = sessions.get(position);
 
                 Log.d(TAG, "Clicked: " + mScanNames.get(position));
+
+                finish();
             }
         });
 
@@ -98,6 +96,8 @@ public class BluetoothScanActivity extends AppCompatActivity {
     }
 
     private void startScan(View view) {
+        Log.d(TAG, "Start Scan");
+
         if (!hasPermissions() || mScanning) {
             Snackbar.make(view, "Already Scanning", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
@@ -120,6 +120,7 @@ public class BluetoothScanActivity extends AppCompatActivity {
     }
 
     private void stopScan() {
+        Log.d(TAG, "Stop Scan");
         if (mScanning && mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothLeScanner != null) {
             mBluetoothLeScanner.stopScan(mScanCallback);
             scanComplete();

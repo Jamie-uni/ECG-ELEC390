@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -93,8 +94,6 @@ public class WorkoutActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        Log.d("TAG", "OnCreate: BLE Scan Launch");
-        startActivity(new Intent(this,BluetoothScanActivity.class));
     }
 
     @Override
@@ -237,9 +236,9 @@ public class WorkoutActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startBleScan();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -269,5 +268,12 @@ public class WorkoutActivity extends AppCompatActivity
         }
 
         return true;
+    }
+    private void startBleScan(){
+        //Intent BleScanIntent = new Intent(this,BluetoothScanActivity.class);
+        //startActivityForResult(BleScanIntent, BLE_DEVICE_REQUEST);
+        startActivity(new Intent(this,BluetoothScanActivity.class));
+
+
     }
 }
