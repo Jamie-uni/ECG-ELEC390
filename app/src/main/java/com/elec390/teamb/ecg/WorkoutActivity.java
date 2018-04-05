@@ -4,10 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.renderscript.ScriptGroup;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -56,6 +58,7 @@ public class WorkoutActivity extends AppCompatActivity
     EditText commentText;
     String commentTime;
     String commentAndTime;
+
     private final Handler mHandler = new Handler();
     private LineGraphSeries<DataPoint> mSeries;
     private double lastXvalue = 0.0;
@@ -147,6 +150,19 @@ public class WorkoutActivity extends AppCompatActivity
         }
         return values;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+            Log.d(TAG, "onResume called");
+        //MenuItem item = new
+        //int id = item.getItemId();
+        //Intent intent;
+        //item.setChecked(true);
+    }
+
+
     //Timer runnable.
     Runnable updateTimer = new Runnable() {
         @Override
@@ -266,6 +282,7 @@ public class WorkoutActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.workout, menu);
+        //nav_menu = menu;
         return true;
     }
 
@@ -278,32 +295,44 @@ public class WorkoutActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startBleScan();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        Intent intent;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (id == R.id.nav_Workout) {
             Log.d("TAG", "Drawer: Workout was selected.");
-            startActivity(new Intent(this,WorkoutActivity.class));
+            intent = new Intent(this,WorkoutActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(intent,0);
         }
         else if (id == R.id.nav_WorkoutHistory) {
             Log.d("TAG", "Drawer: Session History was selected.");
-            startActivity(new Intent(this,WorkoutHistoryActivity.class));
+            intent = new Intent(this,WorkoutHistoryActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(intent,0);
         }
         else if (id == R.id.nav_Settings) {
             Log.d("TAG", "Drawer: Settings was selected.");
-            startActivity(new Intent(this,SettingsActivity.class));
+            intent = new Intent(this,SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(intent,0);
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+
         return true;
+    }
+    private void startBleScan(){
+        //Intent BleScanIntent = new Intent(this,BluetoothScanActivity.class);
+        //startActivityForResult(BleScanIntent, BLE_DEVICE_REQUEST);
+        startActivity(new Intent(this,BluetoothScanActivity.class));
+
+
     }
 }

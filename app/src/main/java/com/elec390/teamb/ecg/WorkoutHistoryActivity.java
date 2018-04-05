@@ -51,6 +51,7 @@ public class WorkoutHistoryActivity extends Activity
         dataStorage = new DataStorage(context);
         sessions = dataStorage.getSessionList();
         mListView = (ListView) findViewById(R.id.sessionListView);
+
         // Set ListView adapter to display the toString() of each session in a separate TextView
         final ArrayAdapter<SessionEntity> adapter = new ArrayAdapter<SessionEntity>(context,
                 R.layout.activity_listview, sessions);
@@ -134,18 +135,24 @@ public class WorkoutHistoryActivity extends Activity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        Intent intent;
         if (id == R.id.nav_Workout) {
             Log.d("TAG", "Drawer: Workout was selected.");
-            startActivity(new Intent(this,WorkoutActivity.class));
+            intent = new Intent(this,WorkoutActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(intent,0);
         }
         else if (id == R.id.nav_WorkoutHistory) {
             Log.d("TAG", "Drawer: Session History was selected.");
-            startActivity(new Intent(this,WorkoutHistoryActivity.class));
+            intent = new Intent(this,WorkoutHistoryActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(intent,0);
         }
         else if (id == R.id.nav_Settings) {
             Log.d("TAG", "Drawer: Settings was selected.");
-            startActivity(new Intent(this,SettingsActivity.class));
+            intent = new Intent(this,SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(intent,0);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

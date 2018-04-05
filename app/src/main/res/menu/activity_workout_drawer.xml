@@ -14,7 +14,7 @@
             android:title="Session History" />
         <item
             android:id="@+id/nav_Settings"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_menu_manage"
             android:title="Settings" />
     </group>
 </menu>
