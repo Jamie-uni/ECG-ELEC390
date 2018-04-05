@@ -30,9 +30,16 @@ import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
+    private DataStorage dataStorage;
+    private ECGSession ecgSession;
+    List<Short> ecgDataValues = new ArrayList<>();
     String TAG = "WorkoutActivity";
     private Button beginWorkoutButton;
     private Button pauseWorkoutButton;
@@ -66,6 +73,7 @@ public class WorkoutActivity extends AppCompatActivity
             // Request the permission to access external storage
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);}
+        dataStorage = new DataStorage(this);
         //Assign Buttons.
         beginWorkoutButton = (Button) this.findViewById(R.id.beginWorkoutButton);
         pauseWorkoutButton = (Button) this.findViewById(R.id.pauseWorkoutButton);
@@ -130,6 +138,7 @@ public class WorkoutActivity extends AppCompatActivity
     };
     private DataPoint[] generateData() {
         Short[] ecgData = new Short[] {90,90,90,90,90,90,90,90,90,90,90,90,90,91,99,106,110,112,113,110,105,97,90,90,90,90,90,90,95,124,153,182,211,241,230,202,173,143,114,89,83,75,67,70,78,85,90,90,90,90,90,92,100,107,113,118,122,124,125,124,121,117,111,104,97,90,90,90,90,90,90,90,90,90,90,92,93,93,92,90,90,90,90,90,90,90,90,90,90,90,90};
+        ecgDataValues.addAll(Arrays.asList(ecgData));
         DataPoint[] values = new DataPoint[ecgData.length];
         for(int i=0;i<ecgData.length;i++){
             lastXvalue += (double) 1/200; // 200Hz Sample Rate
@@ -165,7 +174,7 @@ public class WorkoutActivity extends AppCompatActivity
             pauseWorkoutButton.setVisibility(View.VISIBLE);
             stopWorkoutButton.setVisibility(View.VISIBLE);
             makeCommentButton.setVisibility(View.VISIBLE);
-
+            ecgSession = new ECGSession();
             //Resets timer and starts counting
             startTime = System.currentTimeMillis();
             timerHandler.postDelayed(updateTimer, 0);
@@ -207,6 +216,8 @@ public class WorkoutActivity extends AppCompatActivity
             pauseWorkoutButton.setVisibility(View.GONE);
             stopWorkoutButton.setVisibility(View.GONE);
             makeCommentButton.setVisibility(View.GONE);
+            ecgSession.stopSession();
+            dataStorage.saveWaveform(ecgSession,ecgDataValues);
             timerHandler.removeCallbacks(updateTimer);
             mHandler.removeCallbacks(plotPoint);
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));

@@ -46,24 +46,11 @@
             android:name=".DataBaseTestActivity"
             android:icon="@drawable/ic_menu_share"
             android:label="Database Test">
-            <intent-filter>
-                <action android:name=".DataBaseTest" />
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".RealtimeGraphActivity"
             android:label="Realtime Graph">
-        <intent-filter>
-            <action android:name=".RealtimeGraph" />
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
             android:parentActivityName=".WorkoutActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.elec390.teamb.ecg.WorkoutActivity" />
         </activity>
     </application>
 </manifest>
