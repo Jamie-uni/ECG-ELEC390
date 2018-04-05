@@ -20,6 +20,8 @@ public class SharedPreferenceHelper
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("profileName", profile.getName());
         editor.putString("profileEmail", profile.getEmail());
+        editor.putString("profileDrName", profile.getDrName());
+        editor.putString("profileDrEmail", profile.getDrEmail());
         editor.apply();
         editor.commit();
     }
@@ -29,6 +31,6 @@ public class SharedPreferenceHelper
     {
 
         return new Profile(sharedPreferences.getString("profileName", null),
-                sharedPreferences.getString("profileEmail", null));
+                sharedPreferences.getString("profileEmail", null), sharedPreferences.getString("profileDrName", null), sharedPreferences.getString("profileDrEmail", null));
     }
 }
