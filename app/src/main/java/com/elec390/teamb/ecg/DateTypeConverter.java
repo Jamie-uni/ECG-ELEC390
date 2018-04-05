@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 public class DateTypeConverter {
-    private static final String DATE_FORMAT = "MM-dd-yyyyy-h:mm:ssaa";
+    private static final String DATE_FORMAT = "dd MMM, yyyy (h:mm:ss a)";
     // Method stringToDate converts a String with the formart
     @TypeConverter
     public static Date stringToDate(String value) {

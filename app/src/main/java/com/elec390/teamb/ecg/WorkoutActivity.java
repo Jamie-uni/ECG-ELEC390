@@ -244,10 +244,12 @@ public class WorkoutActivity extends AppCompatActivity
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Comment button pressed.");
+            /*
             pauseWorkoutButton.setText("Resume");
             timerHandler.removeCallbacks(updateTimer);
             pauseTime = System.currentTimeMillis() - startTime;
             commentTime = Long.toString(System.currentTimeMillis() - pauseTime);
+            */
             commentDialog.setTitle("Describe the problem:");
             commentDialog.setView(commentText);
             commentText.setText(""); //Clears previous comments
@@ -255,8 +257,9 @@ public class WorkoutActivity extends AppCompatActivity
             commentDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Save", new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface saveButton, int i){
-                    commentAndTime = commentText.getText().toString()
-                            .concat(" ").concat(commentTime);
+                    //commentAndTime = commentText.getText().toString()
+                    //        .concat(" ").concat(commentTime);
+                    ecgSession.addComment(commentText.getText().toString());
                     Log.d("TAG", "Entered comment: "+ commentAndTime);
                 }
             });

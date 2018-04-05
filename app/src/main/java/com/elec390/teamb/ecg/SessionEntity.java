@@ -42,7 +42,7 @@ public class SessionEntity {
         this.mSessionDataFileName = mSessionDataFileName;
     }
     public String toString() {
-        return "Session #" + sId + "\n" + DateTypeConverter.dateToString(mSessionStart);
+        return "Session #" + sId + "\n          " + DateTypeConverter.dateToString(mSessionStart);
     }
     public String detailsString() {
         return "Session #" + sId + "\nStart Time:\n"+ mSessionStart + "\nEnd Time:\n"
