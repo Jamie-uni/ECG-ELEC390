@@ -9,11 +9,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -33,6 +35,8 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         setContentView(R.layout.activity_workout_session_details);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         String session_details = this.getIntent().getExtras().getString("SESSION_DETAILS");
+        String session_date = this.getIntent().getExtras().getString("SESSION_DATE");
+        getSupportActionBar().setTitle(session_date);
         session_filename = this.getIntent().getExtras().getString("SESSION_FILENAME");
         ecg_data_root = new File(Environment.getExternalStorageDirectory(), "ECGData");
         ecg_datafile = new File(ecg_data_root, session_filename);
@@ -56,6 +60,9 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(getData());
         graph.addSeries(series);
+        GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
+        gridLabel.setHorizontalAxisTitle("Time (s)");
+        gridLabel.setVerticalAxisTitle("Voltage (mV)");
     }
     private DataPoint[] getData() {
         DataPoint[] values = new DataPoint[data_size-1];

@@ -14,7 +14,7 @@ public class ECGSession {
     }
     public void addComment(String c) {
         Date d = new Date();
-        timestampedComments += d + ":   " + c + "\n";
+        timestampedComments += DateTypeConverter.dateToString(d) + ":   " + c + "\n";
     }
     public Date getStartTime() {
         return startTime;

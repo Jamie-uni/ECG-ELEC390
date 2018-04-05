@@ -67,9 +67,10 @@ public class WorkoutHistoryActivity extends Activity
                 adb1.setNegativeButton("View", new AlertDialog.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
+                        String startTime = DateTypeConverter.dateToString(selectedSession.mSessionStart);
+                        detailIntent.putExtra("SESSION_DATE", startTime);
                         detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
-                        detailIntent.putExtra("SESSION_FILENAME",
-                                DateTypeConverter.dateToString(selectedSession.mSessionStart)+".csv");
+                        detailIntent.putExtra("SESSION_FILENAME",startTime+".csv");
                         startActivity(detailIntent);
                     }});
                 adb1.setPositiveButton("Delete", new AlertDialog.OnClickListener() {

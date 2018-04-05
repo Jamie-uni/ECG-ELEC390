@@ -132,7 +132,7 @@ public class WorkoutActivity extends AppCompatActivity
             if(index==0)tempData = generateData();
             mSeries.appendData(tempData[index],true,10000);
             index++;
-            if (index < tempData.length) mHandler.postDelayed(this, 1);
+            if (index < tempData.length) mHandler.postDelayed(this, 10);
             else {
                 index = 0;
                 mHandler.postDelayed(this, 100);

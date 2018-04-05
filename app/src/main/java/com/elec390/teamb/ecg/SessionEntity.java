@@ -45,8 +45,8 @@ public class SessionEntity {
         return "Session #" + sId + "\n          " + DateTypeConverter.dateToString(mSessionStart);
     }
     public String detailsString() {
-        return "Session #" + sId + "\nStart Time:\n"+ mSessionStart + "\nEnd Time:\n"
-                       + mSessionEnd + "\nFile Name in ECGData Folder:\n"
-                       + mSessionDataFileName + "\nSession Comments:\n" + mSessionComments + "\n";
+        return "      Session #" + sId + "\nStart Time: "+ DateTypeConverter.dateToString(mSessionStart)
+                + "\nEnd Time: " + DateTypeConverter.dateToString(mSessionEnd)
+                + "\n      Session Comments:\n" + mSessionComments;
         }
 }
