@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         } catch (Exception e) {e.printStackTrace();}
         TextView tv1 = findViewById(R.id.tv1);
         tv1.setText(session_details);
+        tv1.setMovementMethod(new ScrollingMovementMethod());
         GraphView graph = findViewById(R.id.ecgGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
