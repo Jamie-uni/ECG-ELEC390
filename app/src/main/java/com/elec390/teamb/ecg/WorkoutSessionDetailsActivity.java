@@ -96,6 +96,12 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         File ecg_data_root = new File(Environment.getExternalStorageDirectory(), "ECGData");
         File ecg_datafile = new File(ecg_data_root, session_filename);
         myShareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(ecg_datafile));
+        // Get Email data from Shared Preferences
+        SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(this);
+        Profile profile = new Profile(sharedPreferenceHelper.getProfile());
+        myShareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{profile.getDrEmail()});
+        myShareIntent.putExtra(Intent.EXTRA_SUBJECT, profile.getName()+"'s ECG Data");
+        myShareIntent.putExtra(Intent.EXTRA_TEXT, "Hello "+profile.getDrName()+". This is my ECG data.");
         mShareActionProvider.setShareIntent(myShareIntent);
         return true;
     }
