@@ -328,7 +328,7 @@ public class WorkoutActivity extends AppCompatActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivityIfNeeded(intent,0);
         }
-
+        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
     private void startBleScan(){
