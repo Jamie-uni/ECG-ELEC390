@@ -48,13 +48,14 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         } catch (Exception e) {e.printStackTrace();}
         TextView tv1 = findViewById(R.id.tv1);
         TextView tv2 = findViewById(R.id.tv2);
-        TextView tv3 = findViewById(R.id.tv3);
         String[] lines = session_details.split(System.getProperty("line.separator"));
         tv1.setText(lines[0]);
-        tv2.setText("     "+lines[1]+"\n     "+lines[2]);
-        if (lines.length==5)
-            tv3.setText(lines[3]+"\n     "+lines[4]);
-        tv3.setMovementMethod(new ScrollingMovementMethod());
+        lines[0] = "";
+        for (int i = 1; i < lines.length; i++){
+            lines[0] = lines[0] + "\n" + lines[i];
+        }
+        tv2.setText(lines[0]);
+        tv2.setMovementMethod(new ScrollingMovementMethod());
         GraphView graph = findViewById(R.id.ecgGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);

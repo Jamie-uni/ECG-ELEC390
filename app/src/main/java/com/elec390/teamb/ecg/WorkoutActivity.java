@@ -88,6 +88,9 @@ public class WorkoutActivity extends AppCompatActivity
     long pauseTime = 0;
     Handler timerHandler = new Handler();
     String stopTime;
+    private SharedPreferenceHelper sharedPreferenceHelper;
+    private Profile profile;
+    private TextView nameTextView, emailTextView;
 
     AlertDialog commentDialog;
     EditText commentText;
@@ -104,6 +107,7 @@ public class WorkoutActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_workout);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -146,6 +150,14 @@ public class WorkoutActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
+        profile = new Profile(sharedPreferenceHelper.getProfile());
+        nameTextView = headerView.findViewById(R.id.userNameView);
+        emailTextView = headerView.findViewById(R.id.userEmailView);
+        nameTextView.setText(profile.getName());
+        emailTextView.setText(profile.getEmail());
+
         GraphView graph = findViewById(R.id.realtimeGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
@@ -224,7 +236,7 @@ public class WorkoutActivity extends AppCompatActivity
             int minutes = seconds / 60;
             int hours = minutes / 60;
             seconds %= 60;
-            timer.setText(String.format("%d:%02d:%02d", hours, minutes, seconds));
+            timer.setText(String.format("%02d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -291,6 +303,7 @@ public class WorkoutActivity extends AppCompatActivity
             dataStorage.saveWaveform(ecgSession,ecgDataValues);
             timerHandler.removeCallbacks(updateTimer);
             //mHandler.removeCallbacks(plotPoint);
+            ecgDataValues.clear();
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
         }
     };

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,9 +31,16 @@ public class WorkoutHistoryActivity extends Activity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DataStorage dataStorage;
     private List<SessionEntity> sessions;
+
+
+    //UI
     private ListView mListView;
     private MenuItem editMenuItem = null;
     private boolean deleteMode = false;
+    private SharedPreferenceHelper sharedPreferenceHelper;
+    private Profile profile;
+    private TextView nameTextView, emailTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +56,14 @@ public class WorkoutHistoryActivity extends Activity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(this);
+        Profile profile = new Profile(sharedPreferenceHelper.getProfile());
+        nameTextView = headerView.findViewById(R.id.userNameView);
+        emailTextView = headerView.findViewById(R.id.userEmailView);
+        nameTextView.setText(profile.getName());
+        emailTextView.setText(profile.getEmail());
+
         dataStorage = new DataStorage(context);
         sessions = dataStorage.getSessionList();
         mListView = (ListView) findViewById(R.id.sessionListView);
