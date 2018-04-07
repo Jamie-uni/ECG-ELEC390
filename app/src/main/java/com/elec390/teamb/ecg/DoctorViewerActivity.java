@@ -12,7 +12,7 @@ import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,22 +57,7 @@ public class DoctorViewerActivity extends AppCompatActivity {
             } catch (Exception e) {e.printStackTrace();}
             }
             // Open from Gmail
-            if (scheme.equals("content")) {
-                try {
-                    // Create temp file
-                    File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
-                    // Create storage folder if it doesn't exist
-                    if (!ecgdataroot.exists()) ecgdataroot.mkdirs();
-                    // Create file
-                    ecg_datafile = new File(ecgdataroot,"temp.ecg");
-                    InputStream inputStream = getContentResolver().openInputStream(getIntent().getData());
-                    FileUtils.copyInputStreamToFile(inputStream, ecg_datafile);
-                    FileReader ecgFile = new FileReader(ecg_datafile);
-                    BufferedReader bufferedFile = new BufferedReader(ecgFile);
-                    while (bufferedFile.readLine() != null)data_size++;
-                    bufferedFile.close();
-                } catch (Exception e) {e.printStackTrace();}
-            }
+
             if(ecg_datafile != null) {
                 LineGraphSeries<DataPoint> series = new LineGraphSeries<>(getData());
                 graph.addSeries(series);
