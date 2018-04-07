@@ -70,7 +70,7 @@ public class WorkoutHistoryActivity extends Activity
                         String startTime = DateTypeConverter.dateToString(selectedSession.mSessionStart);
                         detailIntent.putExtra("SESSION_DATE", startTime);
                         detailIntent.putExtra("SESSION_DETAILS", selectedSession.detailsString());
-                        detailIntent.putExtra("SESSION_FILENAME",startTime+".csv");
+                        detailIntent.putExtra("SESSION_FILENAME",startTime+".ecg");
                         startActivity(detailIntent);
                     }});
                 adb1.setPositiveButton("Delete", new AlertDialog.OnClickListener() {
@@ -86,7 +86,7 @@ public class WorkoutHistoryActivity extends Activity
                                 // Delete file
                                 File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
                                 File ecgdatafile = new File(ecgdataroot,
-                                        DateTypeConverter.dateToString(selectedSession.mSessionStart)+".csv");
+                                        DateTypeConverter.dateToString(selectedSession.mSessionStart)+".ecg");
                                 try {
                                     ecgdatafile.delete();
                                 } catch (Exception e) {e.printStackTrace();}

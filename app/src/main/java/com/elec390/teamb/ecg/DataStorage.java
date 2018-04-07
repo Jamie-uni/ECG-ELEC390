@@ -22,7 +22,7 @@ public class DataStorage {
         if (!ecgdataroot.exists()) ecgdataroot.mkdirs();
         // Create file
         File ecgdatafile = new File(ecgdataroot,
-                DateTypeConverter.dateToString(ecgs.getStartTime())+".csv");
+                DateTypeConverter.dateToString(ecgs.getStartTime())+".ecg");
         try {
             FileWriter ecgfilewriter = new FileWriter(ecgdatafile,true);
             ecgfilewriter.append("Time,Value\n");
@@ -38,7 +38,7 @@ public class DataStorage {
         SessionEntity sessent;
         sessent = new SessionEntity(ecgs.getStartTime(), ecgs.getStopTime(),
                 ecgs.getTimestampedComments(),
-                DateTypeConverter.dateToString(ecgs.getStartTime())+".csv");
+                DateTypeConverter.dateToString(ecgs.getStartTime())+".ecg");
         DatabaseInitializer.addSession(sessionDatabase, sessent);
     }
     public List<SessionEntity> getSessionList() {

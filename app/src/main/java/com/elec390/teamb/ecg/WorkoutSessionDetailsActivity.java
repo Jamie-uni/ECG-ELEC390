@@ -45,6 +45,7 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
             FileReader ecgFile = new FileReader(ecg_datafile);
             BufferedReader bufferedFile = new BufferedReader(ecgFile);
             while (bufferedFile.readLine() != null)data_size++;
+            bufferedFile.close();
         } catch (Exception e) {e.printStackTrace();}
         TextView tv1 = findViewById(R.id.tv1);
         tv1.setText(session_details);
@@ -94,7 +95,7 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         ShareActionProvider mShareActionProvider =
                 (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         Intent myShareIntent = new Intent(Intent.ACTION_SEND);
-        myShareIntent.setType("text/plain");
+        myShareIntent.setType("application/ecg");
         File ecg_data_root = new File(Environment.getExternalStorageDirectory(), "ECGData");
         File ecg_datafile = new File(ecg_data_root, session_filename);
         myShareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(ecg_datafile));
