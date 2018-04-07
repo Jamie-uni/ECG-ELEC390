@@ -8,73 +8,71 @@
     tools:context="com.elec390.teamb.ecg.WorkoutActivity"
     tools:showIn="@layout/app_bar_workout">
 
-    <Button
-        android:id="@+id/beginWorkoutButton"
-        android:layout_width="105dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="64dp"
-        android:text="Begin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/stopWorkoutButton"
-        android:layout_width="105dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="64dp"
-        android:text="Stop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/pauseWorkoutButton"
-        android:layout_width="102dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:layout_marginTop="64dp"
-        android:text="Pause"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <com.jjoe64.graphview.GraphView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/realtimeGraph"
-        app:layout_constraintTop_toBottomOf="@id/timerTextView"
-        app:layout_constraintBottom_toTopOf="@id/commentButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:orientation="vertical"
+        android:weightSum="10"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
-    <Button
-        android:id="@+id/commentButton"
-        android:layout_width="165dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="64dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Comment"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="19dp"
+            android:layout_weight="7.7"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/timerTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="sans-serif"
-        android:text="0:00:00"
-        android:textAllCaps="false"
-        android:textSize="70sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.39" />
+            <Button
+                android:id="@+id/commentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Comment" />
+
+            <Button
+                android:id="@+id/stopWorkoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Stop" />
+
+            <Button
+                android:id="@+id/pauseWorkoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pause" />
+
+            <Button
+                android:id="@+id/beginWorkoutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Begin" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/timerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:text="0:00:00"
+            android:textAllCaps="false"
+            android:textSize="36sp"
+            tools:layout_editor_absoluteY="511dp" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/realtimeGraph"
+            android:layout_width="369dp"
+            android:layout_height="392dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="2"
+            android:paddingTop="10dp"
+            tools:layout_editor_absoluteY="511dp" />
+
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

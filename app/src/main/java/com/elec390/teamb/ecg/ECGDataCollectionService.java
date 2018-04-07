@@ -23,7 +23,7 @@ import java.util.UUID;
 import static android.content.Context.BLUETOOTH_SERVICE;
 
 public class ECGDataCollectionService {
-
+/*
     String TAG = "ECGDataCollectionService";
     private Context context;
     //private List<short> waveformDataBuffer;
@@ -74,6 +74,7 @@ public class ECGDataCollectionService {
         }
 
     private class GattServerCallback extends BluetoothGattServerCallback {};
+    */
 }
 
 

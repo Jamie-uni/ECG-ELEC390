@@ -62,7 +62,9 @@
         <activity
             android:name=".BluetoothScanActivity"
             android:label="@string/title_activity_bluetooth_scan"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <service android:name=".BluetoothLeService" android:enabled="true"/>
     </application>
 
 </manifest>

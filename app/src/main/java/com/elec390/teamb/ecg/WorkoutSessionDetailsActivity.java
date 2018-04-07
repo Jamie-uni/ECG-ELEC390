@@ -46,7 +46,13 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
             while (bufferedFile.readLine() != null)data_size++;
         } catch (Exception e) {e.printStackTrace();}
         TextView tv1 = findViewById(R.id.tv1);
-        tv1.setText(session_details);
+        TextView tv2 = findViewById(R.id.tv2);
+        TextView tv3 = findViewById(R.id.tv3);
+        String[] lines = session_details.split(System.getProperty("line.separator"));
+        tv1.setText(lines[0]);
+        tv2.setText("     "+lines[1]+"\n     "+lines[2]);
+        if (lines.length==5)
+            tv3.setText(lines[3]+"\n     "+lines[4]);
         GraphView graph = findViewById(R.id.ecgGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
@@ -55,14 +61,16 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         // set manual Y bounds
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(250);
+        graph.getViewport().setMaxY(200);
         graph.getViewport().setScrollable(true); // enables horizontal scrolling
         graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(getData());
         graph.addSeries(series);
         GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Time (s)");
-        gridLabel.setVerticalAxisTitle("Voltage (mV)");
+        gridLabel.setHumanRounding(true);
+        gridLabel.setLabelsSpace(-2);
+        gridLabel.setVerticalLabelsVisible(false);
     }
     private DataPoint[] getData() {
         DataPoint[] values = new DataPoint[data_size-1];
@@ -75,7 +83,7 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
                 String[] splitLine = sTemp.split(",");
                 double x = Double.parseDouble(splitLine[0]);
                 short y = Short.parseShort(splitLine[1]);
-                DataPoint v = new DataPoint(x, y);
+                DataPoint v = new DataPoint(x, y/20);
                 values[i] = v;
             }
             bufferedFile.close();
