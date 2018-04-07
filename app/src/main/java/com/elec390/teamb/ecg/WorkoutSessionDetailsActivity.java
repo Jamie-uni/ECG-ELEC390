@@ -28,14 +28,14 @@ import java.net.URI;
 public class WorkoutSessionDetailsActivity extends AppCompatActivity
 {
     private int data_size = 0;
-    private String session_filename;
+    private String session_details, session_filename;
     private File ecg_data_root, ecg_datafile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_session_details);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        String session_details = this.getIntent().getExtras().getString("SESSION_DETAILS");
+        session_details = this.getIntent().getExtras().getString("SESSION_DETAILS");
         String session_date = this.getIntent().getExtras().getString("SESSION_DATE");
         getSupportActionBar().setTitle(session_date);
         session_filename = this.getIntent().getExtras().getString("SESSION_FILENAME");
@@ -112,7 +112,8 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         Profile profile = new Profile(sharedPreferenceHelper.getProfile());
         myShareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{profile.getDrEmail()});
         myShareIntent.putExtra(Intent.EXTRA_SUBJECT, profile.getName()+"'s ECG Data");
-        myShareIntent.putExtra(Intent.EXTRA_TEXT, "Hello "+profile.getDrName()+". This is my ECG data.");
+        myShareIntent.putExtra(Intent.EXTRA_TEXT, "Hello "+profile.getDrName()+
+                ". This is my ECG data.\n" + session_details);
         mShareActionProvider.setShareIntent(myShareIntent);
         return true;
     }
