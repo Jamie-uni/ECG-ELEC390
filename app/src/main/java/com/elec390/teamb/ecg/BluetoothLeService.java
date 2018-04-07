@@ -316,4 +316,12 @@ public class BluetoothLeService extends Service {
 
         return mBluetoothGatt.getServices();
     }
+
+    public boolean adapterConnected(){
+        if (mBluetoothAdapter == null) {
+            // Device does not support Bluetooth
+            return false;
+        }
+        else return mBluetoothAdapter.isEnabled();
+    }
 }

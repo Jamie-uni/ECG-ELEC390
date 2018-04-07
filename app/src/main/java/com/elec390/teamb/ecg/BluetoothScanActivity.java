@@ -65,7 +65,7 @@ public class BluetoothScanActivity extends AppCompatActivity {
         // Set ListView adapter to display BLE Devices
         mListView = (ListView) findViewById(R.id.bleListView);
         adapter = new ArrayAdapter<>(context,
-                R.layout.activity_listview, mScanNames);
+                R.layout.activity_listview2, mScanNames);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
