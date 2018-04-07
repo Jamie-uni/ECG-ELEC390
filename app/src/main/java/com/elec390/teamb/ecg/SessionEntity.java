@@ -42,11 +42,13 @@ public class SessionEntity {
         this.mSessionDataFileName = mSessionDataFileName;
     }
     public String toString() {
-        return "Session #" + sId + "\n          " + DateTypeConverter.dateToString(mSessionStart);
+        return "        Session #" + sId + "\n   " + DateTypeConverter.dateToString(mSessionStart);
     }
     public String detailsString() {
-        return "      Session #" + sId + "\nStart Time: "+ DateTypeConverter.dateToString(mSessionStart)
-                + "\nEnd Time: " + DateTypeConverter.dateToString(mSessionEnd)
-                + "\n      Session Comments:\n" + mSessionComments;
+        double duration = mSessionEnd.getTime()-mSessionStart.getTime();
+        int minutes = (int) duration/60000;
+        int seconds = (int) (duration%60000)/1000;
+        return "Session #" + sId + "\nDuration: "+ minutes
+                + "min " + seconds + "s\nSession Comments:\n" + mSessionComments;
         }
 }

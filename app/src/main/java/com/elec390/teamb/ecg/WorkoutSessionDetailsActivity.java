@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -53,6 +54,7 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         tv2.setText("     "+lines[1]+"\n     "+lines[2]);
         if (lines.length==5)
             tv3.setText(lines[3]+"\n     "+lines[4]);
+        tv3.setMovementMethod(new ScrollingMovementMethod());
         GraphView graph = findViewById(R.id.ecgGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
@@ -104,6 +106,12 @@ public class WorkoutSessionDetailsActivity extends AppCompatActivity
         File ecg_data_root = new File(Environment.getExternalStorageDirectory(), "ECGData");
         File ecg_datafile = new File(ecg_data_root, session_filename);
         myShareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(ecg_datafile));
+        // Get Email data from Shared Preferences
+        SharedPreferenceHelper sharedPreferenceHelper = new SharedPreferenceHelper(this);
+        Profile profile = new Profile(sharedPreferenceHelper.getProfile());
+        myShareIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{profile.getDrEmail()});
+        myShareIntent.putExtra(Intent.EXTRA_SUBJECT, profile.getName()+"'s ECG Data");
+        myShareIntent.putExtra(Intent.EXTRA_TEXT, "Hello "+profile.getDrName()+". This is my ECG data.");
         mShareActionProvider.setShareIntent(myShareIntent);
         return true;
     }
