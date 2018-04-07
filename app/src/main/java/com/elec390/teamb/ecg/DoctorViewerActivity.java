@@ -52,7 +52,10 @@ public class DoctorViewerActivity extends AppCompatActivity {
         graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
         GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Time (s)");
-        gridLabel.setVerticalAxisTitle("Voltage (mV)");
+        gridLabel.setHumanRounding(true);
+        gridLabel.setLabelsSpace(-2);
+        gridLabel.setVerticalLabelsVisible(false);
+        //gridLabel.setVerticalAxisTitle("Voltage (mV)");
 
         if(getIntent().getData() != null){
             String scheme = getIntent().getData().getScheme();
@@ -101,7 +104,7 @@ public class DoctorViewerActivity extends AppCompatActivity {
                 String[] splitLine = sTemp.split(",");
                 double x = Double.parseDouble(splitLine[0]);
                 short y = Short.parseShort(splitLine[1]);
-                DataPoint v = new DataPoint(x, y);
+                DataPoint v = new DataPoint(x, y/20);
                 values[i] = v;
             }
             bufferedFile.close();
