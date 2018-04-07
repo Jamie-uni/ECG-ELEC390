@@ -1,12 +1,20 @@
 package com.elec390.teamb.ecg;
 import android.Manifest;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
@@ -25,6 +33,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
@@ -34,11 +44,35 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class WorkoutActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
+
+    //BLE
+    public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
+    public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
+    public String BleDeviceName = "";
+    public String BleDeviceAddress = "";
+    private TextView mConnectionState;
+    private TextView mDataField;
+    private String mDeviceName;
+    private String mDeviceAddress;
+    private ExpandableListView mGattServicesList;
+    private BluetoothLeService mBluetoothLeService;
+    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
+            new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+    private boolean mConnected = false;
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private final String LIST_NAME = "NAME";
+    private final String LIST_UUID = "UUID";
+    private boolean recordingECG = false;
+
+
+
+    //Database
     private DataStorage dataStorage;
     private ECGSession ecgSession;
     List<Short> ecgDataValues = new ArrayList<>();
@@ -48,23 +82,32 @@ public class WorkoutActivity extends AppCompatActivity
     private Button stopWorkoutButton;
     private Button makeCommentButton;
 
+    //UI
     private TextView timer;
     long startTime = 0;
     long pauseTime = 0;
     Handler timerHandler = new Handler();
     String stopTime;
+    private SharedPreferenceHelper sharedPreferenceHelper;
+    private Profile profile;
+    private TextView nameTextView, emailTextView;
 
     AlertDialog commentDialog;
     EditText commentText;
     String commentTime;
     String commentAndTime;
 
+    //Graph
     private final Handler mHandler = new Handler();
     private LineGraphSeries<DataPoint> mSeries;
     private double lastXvalue = 0.0;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_workout);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -107,6 +150,14 @@ public class WorkoutActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        sharedPreferenceHelper = new SharedPreferenceHelper(this);
+        profile = new Profile(sharedPreferenceHelper.getProfile());
+        nameTextView = headerView.findViewById(R.id.userNameView);
+        emailTextView = headerView.findViewById(R.id.userEmailView);
+        nameTextView.setText(profile.getName());
+        emailTextView.setText(profile.getEmail());
+
         GraphView graph = findViewById(R.id.realtimeGraph);
         // set manual X bounds
         graph.getViewport().setXAxisBoundsManual(true);
@@ -115,40 +166,23 @@ public class WorkoutActivity extends AppCompatActivity
         // set manual Y bounds
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(250);
+        graph.getViewport().setMaxY(200);
         graph.getViewport().setScrollable(true); // enables horizontal scrolling
         graph.getViewport().setScalable(true); // enables horizontal zooming and scrolling
         mSeries = new LineGraphSeries<>();
         graph.addSeries(mSeries);
         GridLabelRenderer gridLabel = graph.getGridLabelRenderer();
-        gridLabel.setHorizontalAxisTitle("Time (s)");
-        gridLabel.setVerticalAxisTitle("Voltage (mV)");
-    }
-    private DataPoint[] tempData;
-    private int index=0;
-    Runnable plotPoint = new Runnable() {
-        @Override
-        public void run() {
-            if(index==0)tempData = generateData();
-            mSeries.appendData(tempData[index],true,10000);
-            index++;
-            if (index < tempData.length) mHandler.postDelayed(this, 10);
-            else {
-                index = 0;
-                mHandler.postDelayed(this, 100);
-            }
-        }
-    };
-    private DataPoint[] generateData() {
-        Short[] ecgData = new Short[] {90,90,90,90,90,90,90,90,90,90,90,90,90,91,99,106,110,112,113,110,105,97,90,90,90,90,90,90,95,124,153,182,211,241,230,202,173,143,114,89,83,75,67,70,78,85,90,90,90,90,90,92,100,107,113,118,122,124,125,124,121,117,111,104,97,90,90,90,90,90,90,90,90,90,90,92,93,93,92,90,90,90,90,90,90,90,90,90,90,90,90};
-        ecgDataValues.addAll(Arrays.asList(ecgData));
-        DataPoint[] values = new DataPoint[ecgData.length];
-        for(int i=0;i<ecgData.length;i++){
-            lastXvalue += (double) 1/200; // 200Hz Sample Rate
-            DataPoint v = new DataPoint(lastXvalue, ecgData[i]);
-            values[i] = v;
-        }
-        return values;
+        gridLabel.setHorizontalAxisTitle("\nTime (s)");
+        gridLabel.setHumanRounding(true);
+        gridLabel.setLabelsSpace(-2);
+        gridLabel.setVerticalLabelsVisible(false);
+        //gridLabel.setVerticalAxisTitle("Voltage (mV)");
+
+
+        //BLE
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        startActivity(new Intent(this,BluetoothScanActivity.class));
     }
 
     @Override
@@ -156,11 +190,41 @@ public class WorkoutActivity extends AppCompatActivity
         super.onResume();
 
             Log.d(TAG, "onResume called");
-        //MenuItem item = new
-        //int id = item.getItemId();
-        //Intent intent;
-        //item.setChecked(true);
+
+        //BLE
+        Intent intent = getIntent();
+        if (intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME)){
+            BleDeviceName = intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_NAME);
+            BleDeviceAddress = intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_ADDRESS);
+
+        }
+        if (BleDeviceName.isEmpty() || BleDeviceAddress.isEmpty()){
+            //startActivity(new Intent(this,BluetoothScanActivity.class));
+            return;
+        }
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(BleDeviceAddress);
+            Log.d(TAG, "Connect request result=" + result);
+        }
+
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // getIntent() should always return the most recent
+        Log.d(TAG,"New Intent, NAME: " + intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_NAME)
+                +  ", ADDRESS: " + intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_ADDRESS));
+        setIntent(intent);
+
+    }
+
 
 
     //Timer runnable.
@@ -172,7 +236,7 @@ public class WorkoutActivity extends AppCompatActivity
             int minutes = seconds / 60;
             int hours = minutes / 60;
             seconds %= 60;
-            timer.setText(String.format("%d:%02d:%02d", hours, minutes, seconds));
+            timer.setText(String.format("%02d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -183,6 +247,7 @@ public class WorkoutActivity extends AppCompatActivity
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Begin button pressed.");
+            recordingECG = true;
             if(pauseWorkoutButton.getText().toString().equals("Resume")){
                 pauseWorkoutButton.setText("Pause");
             }
@@ -197,8 +262,7 @@ public class WorkoutActivity extends AppCompatActivity
             DataPoint[] tempDP = {new DataPoint(0,0)};
             mSeries.resetData(tempDP);
             lastXvalue = 0.0;
-            index = 0;
-            mHandler.postDelayed(plotPoint, 0);
+            //mHandler.postDelayed(plotPoint, 0);
         }
     };
 
@@ -208,18 +272,20 @@ public class WorkoutActivity extends AppCompatActivity
             //PAUSE button pressed.
             if(pauseWorkoutButton.getText().toString().equals("Pause")){
                 Log.d("TAG", "Workout Activity: Pause button pressed.");
+                recordingECG = false;
                 pauseWorkoutButton.setText("Resume");
                 timerHandler.removeCallbacks(updateTimer);
-                mHandler.removeCallbacks(plotPoint);
+               // mHandler.removeCallbacks(plotPoint);
                 pauseTime = System.currentTimeMillis() - startTime;
             }
             //RESUME button pressed.
             else if(pauseWorkoutButton.getText().toString().equals("Resume")){
+                recordingECG = true;
                 Log.d("TAG", "Workout Activity: Resume button pressed.");
                 pauseWorkoutButton.setText("Pause");
                 startTime = System.currentTimeMillis() - pauseTime;
                 timerHandler.postDelayed(updateTimer,0);
-                mHandler.postDelayed(plotPoint, 0);
+                //mHandler.postDelayed(plotPoint, 0);
             }
         }
     };
@@ -228,6 +294,7 @@ public class WorkoutActivity extends AppCompatActivity
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Stop button pressed.");
+            recordingECG = false;
             beginWorkoutButton.setVisibility(View.VISIBLE);
             pauseWorkoutButton.setVisibility(View.GONE);
             stopWorkoutButton.setVisibility(View.GONE);
@@ -235,7 +302,8 @@ public class WorkoutActivity extends AppCompatActivity
             ecgSession.stopSession();
             dataStorage.saveWaveform(ecgSession,ecgDataValues);
             timerHandler.removeCallbacks(updateTimer);
-            mHandler.removeCallbacks(plotPoint);
+            //mHandler.removeCallbacks(plotPoint);
+            ecgDataValues.clear();
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
         }
     };
@@ -331,6 +399,24 @@ public class WorkoutActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    //BLE
+
+
+    private void clearUI() {
+        //mGattServicesList.;
+       // mDataField.setText(R.string.no_data);
+    }
+
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
     private void startBleScan(){
         //Intent BleScanIntent = new Intent(this,BluetoothScanActivity.class);
         //startActivityForResult(BleScanIntent, BLE_DEVICE_REQUEST);
@@ -338,4 +424,119 @@ public class WorkoutActivity extends AppCompatActivity
 
 
     }
+
+    // Code to manage Service lifecycle.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            if (!mBluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+            // Automatically connects to the device upon successful start-up initialization.
+            mBluetoothLeService.connect(mDeviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLeService = null;
+        }
+    };
+
+    // Handles various events fired by the Service.
+    // ACTION_GATT_CONNECTED: connected to a GATT server.
+    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
+    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+    //                        or notification operations.
+
+    double ECG_time = 0;
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mConnected = true;
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                mConnected = false;
+                clearUI();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                gatherGattServices(mBluetoothLeService.getSupportedGattServices());
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                if (recordingECG){
+                    String ECGPoint = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
+                    mSeries.appendData(new DataPoint(ECG_time ,Double.parseDouble(ECGPoint)/20),
+                            true, 10000);
+                    ecgDataValues.add(Short.parseShort(ECGPoint));
+                }
+                ECG_time = ECG_time + 0.0042;
+            }
+        }
+    };
+
+    private void gatherGattServices(List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        String uuid = null;
+        String unknownServiceString = "unknownServiceString";
+        String unknownCharaString = "unknownCharaString";
+        ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
+        ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
+                = new ArrayList<ArrayList<HashMap<String, String>>>();
+        mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+
+        // Loops through available GATT Services.
+        for (BluetoothGattService gattService : gattServices) {
+            HashMap<String, String> currentServiceData = new HashMap<String, String>();
+            uuid = gattService.getUuid().toString();
+            currentServiceData.put(
+                    LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
+            currentServiceData.put(LIST_UUID, uuid);
+            gattServiceData.add(currentServiceData);
+
+            ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
+                    new ArrayList<HashMap<String, String>>();
+            List<BluetoothGattCharacteristic> gattCharacteristics =
+                    gattService.getCharacteristics();
+            ArrayList<BluetoothGattCharacteristic> charas =
+                    new ArrayList<BluetoothGattCharacteristic>();
+
+            // Loops through available Characteristics.
+            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                charas.add(gattCharacteristic);
+                HashMap<String, String> currentCharaData = new HashMap<String, String>();
+                uuid = gattCharacteristic.getUuid().toString();
+                currentCharaData.put(
+                        LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
+                currentCharaData.put(LIST_UUID, uuid);
+                gattCharacteristicGroupData.add(currentCharaData);
+            }
+            mGattCharacteristics.add(charas);
+            gattCharacteristicData.add(gattCharacteristicGroupData);
+        }
+
+
+        if (mGattCharacteristics != null) {
+            final BluetoothGattCharacteristic characteristic =
+                    mGattCharacteristics.get(2).get(0);
+            final int charaProp = characteristic.getProperties();
+            if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+                // If there is an active notification on a characteristic, clear
+                // it first so it doesn't update the data field on the user interface.
+                /*if (mNotifyCharacteristic != null) {
+                    mBluetoothLeService.setCharacteristicNotification(
+                            mNotifyCharacteristic, false);
+                    mNotifyCharacteristic = null;
+                }*/
+                mBluetoothLeService.readCharacteristic(characteristic);
+            }
+            if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                mNotifyCharacteristic = characteristic;
+                mBluetoothLeService.setCharacteristicNotification(
+                        characteristic, true);
+            }
+        }
+    }
+
 }

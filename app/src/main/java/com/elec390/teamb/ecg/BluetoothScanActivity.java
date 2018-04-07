@@ -26,6 +26,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.*;
 
 public class BluetoothScanActivity extends AppCompatActivity {
 
@@ -42,7 +43,8 @@ public class BluetoothScanActivity extends AppCompatActivity {
     BtleScanCallback mScanCallback;
     boolean mScanning;
     Handler mHandler;
-
+    List<String> mScanNames;
+    List<String> mScanUUIDs;
     // List View
     ListView mListView;
     public ArrayAdapter<String> adapter;
@@ -58,7 +60,8 @@ public class BluetoothScanActivity extends AppCompatActivity {
         mBluetoothAdapter = bluetoothManager.getAdapter();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         final Context context = this;
-        List<String> mScanNames = new ArrayList<>();
+        mScanNames = new ArrayList<>();
+        mScanUUIDs = new ArrayList<>();
         // Set ListView adapter to display BLE Devices
         mListView = (ListView) findViewById(R.id.bleListView);
         adapter = new ArrayAdapter<>(context,
@@ -70,7 +73,15 @@ public class BluetoothScanActivity extends AppCompatActivity {
                 //final SessionEntity selectedSession = sessions.get(position);
 
                 Log.d(TAG, "Clicked: " + mScanNames.get(position));
-
+                final BluetoothDevice device = mScanResults.get(mScanUUIDs.get(position));
+                if (device == null) return;
+                final Intent intent = new Intent(view.getContext(), WorkoutActivity.class);
+                intent.putExtra(WorkoutActivity.EXTRAS_DEVICE_NAME, device.getName());
+                intent.putExtra(WorkoutActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivityIfNeeded(intent, 0);
+                stopScan();
                 finish();
             }
         });
@@ -196,6 +207,7 @@ public class BluetoothScanActivity extends AppCompatActivity {
             if  (device.getName() != null){
             adapter.insert(device.getName() + "\n" + deviceAddress, adapter.getCount());
             adapter.notifyDataSetChanged();
+            mScanUUIDs.add(deviceAddress);
             Log.e(TAG, "ECG Device added: " + deviceAddress);
 
             }
