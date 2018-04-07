@@ -2,6 +2,7 @@ package com.elec390.teamb.ecg;
 
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,6 +59,12 @@ public class DoctorViewerActivity extends AppCompatActivity {
             // Open from Gmail
             if (scheme.equals("content")) {
                 try {
+                    // Create temp file
+                    File ecgdataroot = new File(Environment.getExternalStorageDirectory(), "ECGData");
+                    // Create storage folder if it doesn't exist
+                    if (!ecgdataroot.exists()) ecgdataroot.mkdirs();
+                    // Create file
+                    ecg_datafile = new File(ecgdataroot,"temp.ecg");
                     InputStream inputStream = getContentResolver().openInputStream(getIntent().getData());
                     FileUtils.copyInputStreamToFile(inputStream, ecg_datafile);
                     FileReader ecgFile = new FileReader(ecg_datafile);
