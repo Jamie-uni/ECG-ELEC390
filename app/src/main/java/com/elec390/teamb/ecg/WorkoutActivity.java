@@ -196,7 +196,7 @@ public class WorkoutActivity extends AppCompatActivity
 
         //BLE
         Intent intent = getIntent();
-        if (intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME)){
+        if (intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && !mConnected){
             BleDeviceName = intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_NAME);
             BleDeviceAddress = intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_ADDRESS);
             if (mRegisteredReceiver && (mBluetoothLeService != null))
