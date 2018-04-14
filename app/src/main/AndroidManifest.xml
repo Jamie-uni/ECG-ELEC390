@@ -17,8 +17,14 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".WorkoutActivity"
+            android:icon="@drawable/becg"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".WorkoutHistoryActivity"
@@ -49,6 +55,14 @@
             android:label="@string/title_activity_bluetooth_scan"
             android:theme="@style/AppTheme.NoActionBar" />
         <service android:name=".BluetoothLeService" android:enabled="true"/>
+        <activity android:label="Database Test" android:name=".DataBaseTestActivity"
+            android:icon="@drawable/ic_menu_share">
+            <intent-filter>
+                <action android:name=".DataBaseTest"/>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".DoctorViewerActivity"
             android:icon="@drawable/ic_lifeline_symbol"
             android:label="Doctor Viewer">
@@ -64,7 +78,7 @@
             we will match absolutely every file opened.
             -->
             <intent-filter
-                android:icon="@drawable/becg"
+                android:icon="@drawable/ic_menu_slideshow"
                 android:label="Doctor Viewer"
                 android:priority="50" >
                 <action android:name="android.intent.action.VIEW" />
