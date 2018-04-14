@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +22,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class WorkoutHistoryActivity extends Activity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DataStorage dataStorage;
     private List<SessionEntity> sessions;
-
-
     //UI
     private ListView mListView;
     private MenuItem editMenuItem = null;
@@ -43,7 +37,6 @@ public class WorkoutHistoryActivity extends Activity
     private SharedPreferenceHelper sharedPreferenceHelper;
     private Profile profile;
     private TextView nameTextView, emailTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +59,9 @@ public class WorkoutHistoryActivity extends Activity
         emailTextView = headerView.findViewById(R.id.userEmailView);
         nameTextView.setText(profile.getName());
         emailTextView.setText(profile.getEmail());
-
         dataStorage = new DataStorage(context);
         sessions = dataStorage.getSessionList();
         mListView = (ListView) findViewById(R.id.sessionListView);
-
         // Set ListView adapter to display the toString() of each session in a separate TextView
         final UsersAdapter adapter = new UsersAdapter(this, sessions);
         mListView.setAdapter(adapter);
@@ -135,7 +126,6 @@ public class WorkoutHistoryActivity extends Activity
             // Lookup view for data population
             TextView sId = (TextView) convertView.findViewById(R.id.sId);
             TextView date = (TextView) convertView.findViewById(R.id.date);
-            //TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
             // Populate the data into the template view using the data object
             double duration = session.mSessionEnd.getTime()-session.mSessionStart.getTime();
             Integer minutes = (int) duration/60000;
@@ -146,9 +136,6 @@ public class WorkoutHistoryActivity extends Activity
             String line2 = session.mSessionStart.toString();
             sId.setText(line1);
             date.setText(line2);
-
-            // tvHome.setText(user.hometown);
-            // Return the completed view to render on screen
             return convertView;
         }
     }

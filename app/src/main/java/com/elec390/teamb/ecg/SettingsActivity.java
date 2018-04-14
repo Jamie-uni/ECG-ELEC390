@@ -1,7 +1,6 @@
 package com.elec390.teamb.ecg;
 
 import android.content.pm.ActivityInfo;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,11 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class SettingsActivity extends AppCompatActivity
 {
@@ -52,9 +48,6 @@ public class SettingsActivity extends AppCompatActivity
 
         saveButton = findViewById(R.id.saveButton);
         saveButton.setVisibility(View.INVISIBLE);
-
-
-
     }
     // Creates the options menu, which contains Edit
     @Override
@@ -78,14 +71,12 @@ public class SettingsActivity extends AppCompatActivity
                 emailEditText2.setFocusableInTouchMode(true);
 
                 saveButton.setVisibility(View.VISIBLE);
-  //              toolBar.setTitle("Edit Profile");
                 return true;
             default:
                 // Invoke the superclass
                 return super.onOptionsItemSelected(item);
         }
     }
-
     // Method called from the xml layouts saveButton onClick. If the user input is valid,
     // the profile gets changed and stored in SharedPreferences
     public void saveChanges(View view)
@@ -96,13 +87,11 @@ public class SettingsActivity extends AppCompatActivity
             profile.setEmail(emailEditText.getText().toString());
             profile.setDrEmail(emailEditText2.getText().toString());
             profile.setDrName(nameEditText2.getText().toString());
-
             sharedPreferenceHelper.saveProfile(profile);
             nameEditText.setFocusable(false);
             emailEditText.setFocusable(false);
             nameEditText2.setFocusable(false);
             emailEditText2.setFocusable(false);
-
             saveButton.setVisibility(View.INVISIBLE);
         }
     }
@@ -114,7 +103,6 @@ public class SettingsActivity extends AppCompatActivity
         String email = emailEditText.getText().toString();
         String drName = nameEditText2.getText().toString();
         String drEmail = emailEditText2.getText().toString();
-
         if(name.length() < 3) {
             Toast.makeText(SettingsActivity.this, "Name is too short", Toast.LENGTH_SHORT).show();
             return false;
@@ -139,7 +127,6 @@ public class SettingsActivity extends AppCompatActivity
             Toast.makeText(SettingsActivity.this, "Email is invalid", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         else return true;
     }
 }

@@ -1,7 +1,6 @@
 package com.elec390.teamb.ecg;
 
 import android.Manifest;
-import android.arch.persistence.room.Room;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class DataBaseTestActivity extends AppCompatActivity {
