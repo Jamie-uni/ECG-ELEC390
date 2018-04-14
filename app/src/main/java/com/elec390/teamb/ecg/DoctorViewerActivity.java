@@ -79,7 +79,13 @@ public class DoctorViewerActivity extends AppCompatActivity {
                     // Create file
                     ecg_datafile = new File(ecgdataroot,"temp.ecg");
                     InputStream inputStream = getContentResolver().openInputStream(getIntent().getData());
-                    FileUtils.copyInputStreamToFile(inputStream, ecg_datafile);
+                    //FileUtils.copyInputStreamToFile(inputStream, ecg_datafile);
+                    OutputStream outStream = new FileOutputStream(ecg_datafile);
+                    byte[] buffer = new byte[8 * 1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outStream.write(buffer, 0, bytesRead);
+                    }
                     FileReader ecgFile = new FileReader(ecg_datafile);
                     BufferedReader bufferedFile = new BufferedReader(ecgFile);
                     while (bufferedFile.readLine() != null)data_size++;
