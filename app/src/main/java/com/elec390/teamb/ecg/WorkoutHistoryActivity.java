@@ -13,10 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WorkoutHistoryActivity extends Activity
@@ -69,8 +72,7 @@ public class WorkoutHistoryActivity extends Activity
         mListView = (ListView) findViewById(R.id.sessionListView);
 
         // Set ListView adapter to display the toString() of each session in a separate TextView
-        final ArrayAdapter<SessionEntity> adapter = new ArrayAdapter<SessionEntity>(context,
-                R.layout.activity_listview, sessions);
+        final UsersAdapter adapter = new UsersAdapter(this, sessions);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,8 +115,44 @@ public class WorkoutHistoryActivity extends Activity
                     }});
                 adb1.show();
             }
+
         });
     }
+
+    public class UsersAdapter extends ArrayAdapter<SessionEntity> {
+        public UsersAdapter(Context context, List<SessionEntity> users) {
+            super(context, 0, users);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            SessionEntity session = sessions.get(position);
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_listview, parent, false);
+            }
+            // Lookup view for data population
+            TextView sId = (TextView) convertView.findViewById(R.id.sId);
+            TextView date = (TextView) convertView.findViewById(R.id.date);
+            //TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
+            // Populate the data into the template view using the data object
+            double duration = session.mSessionEnd.getTime()-session.mSessionStart.getTime();
+            Integer minutes = (int) duration/60000;
+            Integer seconds = (int) (duration%60000)/1000;
+            String line1 = "Workout #" + ((Integer)session.sId).toString() + ": "
+                    + minutes.toString() + " min "
+                    + seconds.toString()+" sec";
+            String line2 = session.mSessionStart.toString();
+            sId.setText(line1);
+            date.setText(line2);
+
+            // tvHome.setText(user.hometown);
+            // Return the completed view to render on screen
+            return convertView;
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

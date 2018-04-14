@@ -19,6 +19,7 @@ import android.os.SystemClock;
 import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -68,7 +69,9 @@ public class WorkoutActivity extends AppCompatActivity
     private BluetoothGattCharacteristic mNotifyCharacteristic;
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
+    private boolean mRegisteredReceiver = false;
     private boolean recordingECG = false;
+    double ECG_time = 0;
 
 
 
@@ -193,18 +196,27 @@ public class WorkoutActivity extends AppCompatActivity
 
         //BLE
         Intent intent = getIntent();
-        if (intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME)){
+        if (intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && intent.hasExtra(WorkoutActivity.EXTRAS_DEVICE_NAME) && !mConnected){
             BleDeviceName = intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_NAME);
             BleDeviceAddress = intent.getStringExtra(WorkoutActivity.EXTRAS_DEVICE_ADDRESS);
-
+            if (mRegisteredReceiver && (mBluetoothLeService != null))
+                    unregisterReceiver(mGattUpdateReceiver);
+                    mBluetoothLeService.disconnect();
+                    registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+                    mBluetoothLeService.connect(BleDeviceAddress);
+                    mConnected = true;
+                    return;
         }
         if (BleDeviceName.isEmpty() || BleDeviceAddress.isEmpty()){
             //startActivity(new Intent(this,BluetoothScanActivity.class));
             return;
         }
+
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        mRegisteredReceiver = true;
         if (mBluetoothLeService != null) {
             final boolean result = mBluetoothLeService.connect(BleDeviceAddress);
+            mConnected = true;
             Log.d(TAG, "Connect request result=" + result);
         }
 
@@ -247,6 +259,14 @@ public class WorkoutActivity extends AppCompatActivity
         @Override
         public void onClick(View v){
             Log.d("TAG", "Workout Activity: Begin button pressed.");
+            if (!mConnected || !mBluetoothLeService.adapterConnected()){
+                mConnected = false;
+                BleDeviceName = "";
+                BleDeviceAddress = "";
+                Snackbar.make(v, "Not paired with device", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                return;
+            }
             recordingECG = true;
             if(pauseWorkoutButton.getText().toString().equals("Resume")){
                 pauseWorkoutButton.setText("Pause");
@@ -304,6 +324,7 @@ public class WorkoutActivity extends AppCompatActivity
             timerHandler.removeCallbacks(updateTimer);
             //mHandler.removeCallbacks(plotPoint);
             ecgDataValues.clear();
+            ECG_time = 0;
             timer.setText(String.format("%d:%02d:%02d", 0, 0, 0));
         }
     };
@@ -420,6 +441,7 @@ public class WorkoutActivity extends AppCompatActivity
     private void startBleScan(){
         //Intent BleScanIntent = new Intent(this,BluetoothScanActivity.class);
         //startActivityForResult(BleScanIntent, BLE_DEVICE_REQUEST);
+        mBluetoothLeService.disconnect();
         startActivity(new Intent(this,BluetoothScanActivity.class));
 
 
@@ -452,7 +474,6 @@ public class WorkoutActivity extends AppCompatActivity
     // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
     //                        or notification operations.
 
-    double ECG_time = 0;
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
