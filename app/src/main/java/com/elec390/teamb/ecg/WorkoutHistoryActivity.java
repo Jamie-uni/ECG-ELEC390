@@ -26,6 +26,9 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Activity list the stored ECG sessions for viewing or deleting
+ */
 public class WorkoutHistoryActivity extends Activity
         implements NavigationView.OnNavigationItemSelectedListener {
     private DataStorage dataStorage;
@@ -66,6 +69,9 @@ public class WorkoutHistoryActivity extends Activity
         final UsersAdapter adapter = new UsersAdapter(this, sessions);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * Called when the user taps on an ECG session
+             */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final SessionEntity selectedSession = sessions.get(position);
@@ -74,6 +80,9 @@ public class WorkoutHistoryActivity extends Activity
                 adb1.setTitle("View or Delete?");
                 adb1.setMessage("Would you like to view or delete session?");
                 adb1.setNegativeButton("View", new AlertDialog.OnClickListener() {
+                    /**
+                     * Selected ECG session data is sent to the WorkoutSessionDetailsActivity
+                     */
                     public void onClick(DialogInterface dialog, int which) {
                         Intent detailIntent = new Intent(context, WorkoutSessionDetailsActivity.class);
                         String startTime = DateTypeConverter.dateToString(selectedSession.mSessionStart);
@@ -83,6 +92,9 @@ public class WorkoutHistoryActivity extends Activity
                         startActivity(detailIntent);
                     }});
                 adb1.setPositiveButton("Delete", new AlertDialog.OnClickListener() {
+                    /**
+                     * ECG session is deleted from database and file is removed from storage
+                     */
                     public void onClick(DialogInterface dialog, int which) {
                         AlertDialog.Builder adb2=new AlertDialog.Builder(context);
                         adb2.setTitle("Delete?");

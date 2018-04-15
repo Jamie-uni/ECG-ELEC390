@@ -1,5 +1,8 @@
 package com.elec390.teamb.ecg;
 
+/**
+ * Class holds doctor and patient information
+ */
 public class Profile
 {
     private String profileName;

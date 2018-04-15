@@ -22,6 +22,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
+/**
+ * Displays the selected ECG session from the history list
+ */
 public class WorkoutSessionDetailsActivity extends AppCompatActivity
 {
     private int data_size = 0;

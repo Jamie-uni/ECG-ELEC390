@@ -6,7 +6,7 @@ import android.content.Context;
 import java.util.List;
 
 /**
- * Room database worker class
+ * Room database worker class. Uses the DAO to perform SQL functions
  */
 
 public class DatabaseInitializer {

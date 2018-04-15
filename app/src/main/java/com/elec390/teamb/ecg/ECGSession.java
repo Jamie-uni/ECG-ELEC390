@@ -2,6 +2,10 @@ package com.elec390.teamb.ecg;
 
 import java.util.Date;
 
+/**
+ * Used for storing the stopTime, startTime, and timestampedComments of the
+ * current ECG session
+ */
 public class ECGSession {
     private final Date startTime;
     private Date stopTime;

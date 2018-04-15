@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Testing class. Used for generating simulated ECG data to be viewed in
+ * WorkoutHistoryActivity
+ */
 public class DataBaseTestActivity extends AppCompatActivity {
     private DataStorage dataStorage;
     private ECGSession ecgSession;
@@ -31,6 +35,7 @@ public class DataBaseTestActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
         }
+        // Access to database and file storage
         dataStorage = new DataStorage(this);
         String text = printSessions();
         TextView tv1 = findViewById(R.id.tv1);
@@ -43,12 +48,21 @@ public class DataBaseTestActivity extends AppCompatActivity {
         b3 = findViewById(R.id.b3);
         b3.setVisibility(View.INVISIBLE);
     }
+
+    /**
+     * Creates new ECGSession
+     */
     public void startSession(View v) {
         ecgSession = new ECGSession();
         b1.setVisibility(View.INVISIBLE);
         b2.setVisibility(View.VISIBLE);
         b3.setVisibility(View.VISIBLE);
     }
+
+    /**
+     * Used to stop session. Generates the .ecg data file and
+     * stores the ECGSession in the SQL database.
+     */
     public void stopSession(View v) {
         ecgSession.stopSession();
         List<Short> shortList = new ArrayList<>();
@@ -62,6 +76,10 @@ public class DataBaseTestActivity extends AppCompatActivity {
         b2.setVisibility(View.INVISIBLE);
         b3.setVisibility(View.INVISIBLE);
     }
+
+    /**
+     * Adds comments to the current ECGSession
+     */
     public void addComment(View v) {ecgSession.addComment("Hi");}
     private String printSessions() {
         String text = "";
@@ -74,6 +92,10 @@ public class DataBaseTestActivity extends AppCompatActivity {
         }
         return text;
     }
+
+    /**
+     * Generates an array of Short values representing a simulated ECG reading
+     */
     private List<Short> generateData() {
         Short[] ecgData = new Short[] {900,900,900,900,900,900,900,900,900,900,900,899,900,914,994,1060,1104,1125,1128,1101,1049,971,899,900,901,900,899,900,946,1239,1531,1820,2110,2409,2302,2015,1725,1433,1142,894,826,752,674,701,775,851,901,900,899,899,900,920,997,1068,1131,1183,1222,1244,1249,1238,1211,1168,1111,1045,971,901,900,900,900,900,900,900,900,900,900,917,932,934,921,901,900,900,900,900,900,900,900,900,900,900,900};
         return Arrays.asList(ecgData);

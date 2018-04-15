@@ -21,6 +21,9 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Used to graph .ecg files
+ */
 public class DoctorViewerActivity extends AppCompatActivity {
     private int data_size = 0;
     private File ecg_datafile;
@@ -95,6 +98,9 @@ public class DoctorViewerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Returns an array of DataPoint objects from the .ecg file
+     */
     private DataPoint[] getData() {
         DataPoint[] values = new DataPoint[data_size-1];
         try {
